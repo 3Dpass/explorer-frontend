@@ -25,7 +25,7 @@ const TransferPreview = ({ transfer }) => {
           </div>
         </div>
         <div className="right-block-content">
-          <div className="block-value">{value / 1000000000000} KLP</div>
+          <div className="block-value">{value / 1000000000000} P3D</div>
           <div className="block-time">{moment(blockDatetime).fromNow()}</div>
         </div>
       </div>

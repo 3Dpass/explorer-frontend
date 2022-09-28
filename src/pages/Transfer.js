@@ -132,9 +132,9 @@ const Transfer = () => {
       let finalValue = extendValue / 1000000000000;
 
       let object = {
-        value: finalValue + " KLP",
-        sender: extrinctsInfo.method.args.dest.Id,
-        destination: extrinctsInfo.signer.Id,
+        value: finalValue + " P3D",
+        sender: extrinctsInfo.signer.Id,
+        destination: extrinctsInfo.method.args.dest.Id,
         partialFee: parsedInfo.partialFee,
         estimatedFee: estimatedFee + " mP3D",
       };
@@ -204,9 +204,15 @@ const Transfer = () => {
           <ListInfo title={"Extrinsic Hash"} info={hash} canCopy={true} />
           <ListInfo title={"Module"} info={callModule} canCopy={false} />
           <ListInfo title={"Call"} info={callName} canCopy={false} />
-          {sender && <ListInfo title={"Sender"} info={sender} canCopy={true} />}
+          {sender && (
+            <ListInfo title={"Sender (from)"} info={sender} canCopy={true} />
+          )}
           {destination && (
-            <ListInfo title={"Destination"} info={destination} canCopy={true} />
+            <ListInfo
+              title={"Destination (to)"}
+              info={destination}
+              canCopy={true}
+            />
           )}
           {value && <ListInfo title={"Value"} info={value} canCopy={false} />}
           {estimatedFee && (
