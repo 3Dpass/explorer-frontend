@@ -63,12 +63,12 @@ const Blocks = () => {
             </div>
           </div>
           <Table header={headersTable} array={prepareTableArray(blocks)} />
+          <Pagination
+            pagePrev={pagination.pagePrev}
+            pageNext={pagination.pageNext}
+            setPageKey={setPageKey}
+          />
         </div>
-        <Pagination
-          pagePrev={pagination.pagePrev}
-          pageNext={pagination.pageNext}
-          setPageKey={setPageKey}
-        />
       </div>
     </div>
   );
