@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from "react";
 
-import BlockPreview from "../components/BlockPreview";
 import Pagination from "../components/Pagination";
+import Table from "../components/Table";
 import axiosInstance from "../api/axios";
+import moment from "moment";
 
 const Blocks = () => {
   const [blocks, setBlocks] = useState([]);
   const [pageKey, setPageKey] = useState(1);
   const [pagination, setPagination] = useState({});
+  const headersTable = [
+    "Block",
+    "Hash",
+    "Events",
+    "Logs",
+    "Extrinsics",
+    "Time",
+  ];
 
   useEffect(() => {
     const getBlocks = async () => {
       const postData = {
-        query: `query{getBlocks(pageKey: "${pageKey}", pageSize: 20){pageInfo{pageSize, pageNext, pagePrev}, objects{number, parentNumber, parentHash, stateRoot, hash, datetime, totalWeight, countExtrinsics, countEvents, countLogs, specName}}}`,
+        query: `query{getBlocks(pageKey: "${pageKey}", pageSize: 12){pageInfo{pageSize, pageNext, pagePrev}, objects{number, parentNumber, parentHash, stateRoot, hash, datetime, totalWeight, countExtrinsics, countEvents, countLogs, specName}}}`,
       };
 
       const response = await axiosInstance.post("", postData);
@@ -22,19 +31,38 @@ const Blocks = () => {
     getBlocks();
   }, [pageKey]);
 
+  const prepareTableArray = (arr) => {
+    if (!arr.length) {
+      return [];
+    }
+
+    let array = [];
+    for (let i = 0; i < arr.length; i++) {
+      let item = arr[i];
+      array.push([
+        { val: item.number, url: "/block/" + item.number },
+        { val: item.hash },
+        { val: item.countEvents },
+        { val: item.countLogs },
+        { val: item.countExtrinsics },
+        { val: moment(item.datetime).fromNow() },
+      ]);
+    }
+
+    return array;
+  };
+
   return (
     <div className="page-content">
       <div className="main-inner">
         <div className="list-container blocks-list-container">
-          <div className="list-header">
+          <div className="list-header mb10">
             <div className="list-header-content">
               <div className="list-icon cube-icon"></div>
               <div className="list-title">Blocks</div>
             </div>
           </div>
-          {blocks.map((item, i) => (
-            <BlockPreview block={item} key={i} />
-          ))}
+          <Table header={headersTable} array={prepareTableArray(blocks)} />
         </div>
         <Pagination
           pagePrev={pagination.pagePrev}

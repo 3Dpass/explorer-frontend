@@ -1,6 +1,7 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import React, { useEffect, useState } from "react";
 
+import ErrorData from "../components/ErrorData";
 import ListInfo from "../components/ListInfo";
 import Table from "../components/Table";
 import axiosInstance from "../api/axios";
@@ -18,6 +19,7 @@ const Transfer = () => {
     "Event Name",
   ];
   const [events, setEvents] = useState([]);
+  const [errorData, setErrorData] = useState(false);
 
   useEffect(() => {
     const wsProvider = new WsProvider("wss://rpc2.3dpass.org");
@@ -64,11 +66,13 @@ const Transfer = () => {
       };
 
       const response = await axiosInstance.post("", postData);
-      setExtrinsic(response.data.data.getExtrinsic);
 
-      let eventsArray = [];
-      const postEvent = {
-        query: `{
+      if (response.data.data.getExtrinsic) {
+        setExtrinsic(response.data.data.getExtrinsic);
+
+        let eventsArray = [];
+        const postEvent = {
+          query: `{
           getEvent(filters: {blockNumber: ${blockNumber} eventIdx: ${number}})
             {
               eventIdx
@@ -87,59 +91,62 @@ const Transfer = () => {
               specVersion
             }
         }`,
-      };
+        };
 
-      const responseEvent = await axiosInstance.post("", postEvent);
-      eventsArray.push(responseEvent.data.data.getEvent);
-      setEvents(eventsArray);
+        const responseEvent = await axiosInstance.post("", postEvent);
+        eventsArray.push(responseEvent.data.data.getEvent);
+        setEvents(eventsArray);
 
-      const api = await ApiPromise.create({ provider: wsProvider });
-      const blockHash = response.data.data.getExtrinsic.blockHash;
-      const { block } = await api.rpc.chain.getBlock(blockHash);
-      const extrinctsInfo = JSON.parse(
-        JSON.stringify(block.extrinsics[1].toHuman(), null, 2)
-      );
+        const api = await ApiPromise.create({ provider: wsProvider });
+        const blockHash = response.data.data.getExtrinsic.blockHash;
+        const { block } = await api.rpc.chain.getBlock(blockHash);
+        const extrinctsInfo = JSON.parse(
+          JSON.stringify(block.extrinsics[1].toHuman(), null, 2)
+        );
 
-      const queryFeeDetails = await api.rpc.payment.queryFeeDetails(
-        block.extrinsics[1].toHex(),
-        blockHash
-      );
+        const queryFeeDetails = await api.rpc.payment.queryFeeDetails(
+          block.extrinsics[1].toHex(),
+          blockHash
+        );
 
-      const feedInfo = JSON.parse(
-        JSON.stringify(queryFeeDetails.toHuman(), null, 2)
-      );
+        const feedInfo = JSON.parse(
+          JSON.stringify(queryFeeDetails.toHuman(), null, 2)
+        );
 
-      let baseFee = feedInfo.inclusionFee.baseFee.split(" ")[0];
-      let finalBaseFee = Number(baseFee);
-      let lenFee = feedInfo.inclusionFee.lenFee
-        .split(" ")[0]
-        .replaceAll(".", "");
-      let finalLenFee = Number(lenFee);
-      let convertLen = finalLenFee / 10000000;
-      let estimatedFee = finalBaseFee + convertLen;
+        let baseFee = feedInfo.inclusionFee.baseFee.split(" ")[0];
+        let finalBaseFee = Number(baseFee);
+        let lenFee = feedInfo.inclusionFee.lenFee
+          .split(" ")[0]
+          .replaceAll(".", "");
+        let finalLenFee = Number(lenFee);
+        let convertLen = finalLenFee / 10000000;
+        let estimatedFee = finalBaseFee + convertLen;
 
-      const queryInfo = await api.rpc.payment.queryInfo(
-        block.extrinsics[1].toHex(),
-        blockHash
-      );
+        const queryInfo = await api.rpc.payment.queryInfo(
+          block.extrinsics[1].toHex(),
+          blockHash
+        );
 
-      const parsedInfo = JSON.parse(
-        JSON.stringify(queryInfo.toHuman(), null, 2)
-      );
+        const parsedInfo = JSON.parse(
+          JSON.stringify(queryInfo.toHuman(), null, 2)
+        );
 
-      let value = parseInt(extrinctsInfo.method.args.value);
-      let extendValue = value * 1000000000000000;
-      let finalValue = extendValue / 1000000000000;
+        let value = parseInt(extrinctsInfo.method.args.value);
+        let extendValue = value * 1000000000000000;
+        let finalValue = extendValue / 1000000000000;
 
-      let object = {
-        value: finalValue + " P3D",
-        sender: extrinctsInfo.signer.Id,
-        destination: extrinctsInfo.method.args.dest.Id,
-        partialFee: parsedInfo.partialFee,
-        estimatedFee: estimatedFee + " mP3D",
-      };
+        let object = {
+          value: finalValue + " P3D",
+          sender: extrinctsInfo.signer.Id,
+          destination: extrinctsInfo.method.args.dest.Id,
+          partialFee: parsedInfo.partialFee,
+          estimatedFee: estimatedFee + " mP3D",
+        };
 
-      setExtrinsicInfo(object);
+        setExtrinsicInfo(object);
+      } else {
+        setErrorData(true);
+      }
     };
 
     getExtrinsic(splitParam[0], splitParam[1]);
@@ -188,76 +195,91 @@ const Transfer = () => {
   return (
     <div className="page-content">
       <div className="main-inner">
-        <div className="list-container blocks-list-container">
-          <div className="list-header">
-            <div className="list-header-content">
-              <div className="list-icon transfer-icon"></div>
-              <div className="list-title">Extrinsic#{number}</div>
+        {!errorData && (
+          <>
+            <div className="list-container blocks-list-container">
+              <div className="list-header">
+                <div className="list-header-content">
+                  <div className="list-icon transfer-icon"></div>
+                  <div className="list-title">Extrinsic#{number}</div>
+                </div>
+              </div>
+              <ListInfo
+                title={"Block Time"}
+                info={moment(blockDatetime).fromNow()}
+                canCopy={false}
+              />
+              <ListInfo title={"Block"} info={blockNumber} canCopy={false} />
+              <ListInfo title={"Extrinsic Hash"} info={hash} canCopy={true} />
+              <ListInfo title={"Module"} info={callModule} canCopy={false} />
+              <ListInfo title={"Call"} info={callName} canCopy={false} />
+              {sender && (
+                <ListInfo
+                  title={"Sender (from)"}
+                  info={sender}
+                  canCopy={true}
+                />
+              )}
+              {destination && (
+                <ListInfo
+                  title={"Destination (to)"}
+                  info={destination}
+                  canCopy={true}
+                />
+              )}
+              {value && (
+                <ListInfo title={"Value"} info={value} canCopy={false} />
+              )}
+              {estimatedFee && (
+                <ListInfo
+                  title={"Estimated Fee"}
+                  info={estimatedFee}
+                  canCopy={false}
+                />
+              )}
+              {partialFee && (
+                <ListInfo
+                  title={"Used Fee"}
+                  info={partialFee}
+                  canCopy={false}
+                />
+              )}
+              <ListInfo
+                title={"Nonce"}
+                info={nonce ? nonce : "-"}
+                canCopy={false}
+              />
+              <ListInfo
+                title={"Result"}
+                info={complete === 1 ? "Finalized" : "Not Finalized"}
+                canCopy={false}
+              />
+              {callArguments && (
+                <ListInfo
+                  title={"Parameters"}
+                  info={JSON.stringify(JSON.parse(callArguments), null, 2)}
+                  canCopy={false}
+                  isCode={true}
+                />
+              )}
+              <ListInfo
+                title={"Signature"}
+                info={signature ? signature : "-"}
+                canCopy={false}
+              />
             </div>
-          </div>
-          <ListInfo
-            title={"Block Time"}
-            info={moment(blockDatetime).fromNow()}
-            canCopy={false}
-          />
-          <ListInfo title={"Block"} info={blockNumber} canCopy={false} />
-          <ListInfo title={"Extrinsic Hash"} info={hash} canCopy={true} />
-          <ListInfo title={"Module"} info={callModule} canCopy={false} />
-          <ListInfo title={"Call"} info={callName} canCopy={false} />
-          {sender && (
-            <ListInfo title={"Sender (from)"} info={sender} canCopy={true} />
-          )}
-          {destination && (
-            <ListInfo
-              title={"Destination (to)"}
-              info={destination}
-              canCopy={true}
-            />
-          )}
-          {value && <ListInfo title={"Value"} info={value} canCopy={false} />}
-          {estimatedFee && (
-            <ListInfo
-              title={"Estimated Fee"}
-              info={estimatedFee}
-              canCopy={false}
-            />
-          )}
-          {partialFee && (
-            <ListInfo title={"Used Fee"} info={partialFee} canCopy={false} />
-          )}
-          <ListInfo
-            title={"Nonce"}
-            info={nonce ? nonce : "-"}
-            canCopy={false}
-          />
-          <ListInfo
-            title={"Result"}
-            info={complete === 1 ? "Finalized" : "Not Finalized"}
-            canCopy={false}
-          />
-          {callArguments && (
-            <ListInfo
-              title={"Parameters"}
-              info={JSON.stringify(JSON.parse(callArguments), null, 2)}
-              canCopy={false}
-              isCode={true}
-            />
-          )}
-          <ListInfo
-            title={"Signature"}
-            info={signature ? signature : "-"}
-            canCopy={false}
-          />
-        </div>
-        <div className="list-container blocks-list-container table-container">
-          <div className="main-menu">
-            <div className="menu-item active">Events ({events.length})</div>
-          </div>
-          <Table
-            header={eventsHeader}
-            array={prepareTableArray(events, "events")}
-          />
-        </div>
+            <div className="list-container blocks-list-container table-container">
+              <div className="main-menu">
+                <div className="menu-item active">Events ({events.length})</div>
+              </div>
+              <Table
+                header={eventsHeader}
+                array={prepareTableArray(events, "events")}
+              />
+            </div>
+          </>
+        )}
+        {errorData && <ErrorData error={"No available data for Extrinsic"} />}
       </div>
     </div>
   );

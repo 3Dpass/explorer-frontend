@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from "react";
 
 import Pagination from "../components/Pagination";
-import TransferPreview from "../components/TransferPreview";
+import Table from "../components/Table";
 import axiosInstance from "../api/axios";
+import moment from "moment";
 
 const Blocks = () => {
   const [transfers, setTransfers] = useState([]);
   const [pageKey, setPageKey] = useState(1);
   const [pagination, setPagination] = useState({});
+  const headersTable = [
+    "Extrinsic",
+    "Block",
+    "From",
+    "To",
+    "Value",
+    "Block Time",
+  ];
 
   useEffect(() => {
     const getTransfers = async () => {
       const postData = {
-        query: `query{getTransfers(pageKey: "${pageKey}", pageSize: 10) {pageInfo{pageSize, pageNext, pagePrev}, objects{blockNumber, eventIdx, extrinsicIdx, value, blockDatetime, complete, fromMultiAddressType, fromMultiAddressAccountId, toMultiAddressType, toMultiAddressAccountId}}}`,
+        query: `query{getTransfers(pageKey: "${pageKey}", pageSize: 12) {pageInfo{pageSize, pageNext, pagePrev}, objects{blockNumber, eventIdx, extrinsicIdx, value, blockDatetime, complete, fromMultiAddressType, fromMultiAddressAccountId, toMultiAddressType, toMultiAddressAccountId}}}`,
       };
 
       const response = await axiosInstance.post("", postData);
@@ -21,20 +30,44 @@ const Blocks = () => {
     };
     getTransfers();
   }, [pageKey]);
+  const prepareTableArray = (arr) => {
+    if (!arr.length) {
+      return [];
+    }
+
+    let array = [];
+    for (let i = 0; i < arr.length; i++) {
+      let item = arr[i];
+      array.push([
+        {
+          val: item.blockNumber + "-" + item.extrinsicIdx,
+          url: "/extrinsic/" + item.blockNumber + "-" + item.extrinsicIdx,
+        },
+        {
+          val: item.blockNumber,
+          url: "/block/" + item.blockNumber,
+        },
+        { val: "Faucet" },
+        { val: item.toMultiAddressAccountId },
+        { val: item.value / 1000000000000 + " P3D" },
+        { val: moment(item.blockDatetime).fromNow() },
+      ]);
+    }
+
+    return array;
+  };
 
   return (
     <div className="page-content">
       <div className="main-inner">
         <div className="list-container blocks-list-container">
-          <div className="list-header">
+          <div className="list-header mb10">
             <div className="list-header-content">
               <div className="list-icon transfer-icon"></div>
               <div className="list-title">Transfers</div>
             </div>
           </div>
-          {transfers.map((item, i) => (
-            <TransferPreview transfer={item} key={i} />
-          ))}
+          <Table header={headersTable} array={prepareTableArray(transfers)} />
         </div>
         <Pagination
           pagePrev={pagination.pagePrev}

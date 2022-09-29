@@ -134,7 +134,7 @@ body {
 .list-title {
   display: inline-block;
 
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   color: #303030;
 
@@ -144,14 +144,14 @@ body {
 .list-icon {
   display: inline-block;
 
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
 
   margin-right: 8px;
 
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 20px;
+  background-size: 25px;
 
   vertical-align: middle;
 }
@@ -189,6 +189,12 @@ body {
   cursor: pointer;
 }
 
+.main-btn:hover {
+  background-color: #3fb0ac;
+
+  color: #fff;
+}
+
 .pagination-container {
   display: inline-block;
 
@@ -214,6 +220,7 @@ body {
   border-radius: 2px;
 
   cursor: pointer;
+  vertical-align: middle;
 }
 
 .first-btn {
@@ -310,7 +317,6 @@ body {
   width: 100%;
 
   border-collapse: collapse;
-  border: 2px solid #e7eaf3;
 }
 
 .main-table th {
@@ -323,11 +329,11 @@ body {
 
   background-color: #3fb0ac;
 
-  border: 2px solid #e7eaf3;
+  border: 1px solid #3fb0ac;
 }
 
 .main-table td {
-  padding: 8px 10px;
+  padding: 12px 5px;
 
   text-align: left;
   font-size: 16px;
@@ -335,7 +341,7 @@ body {
 
   background-color: #fff;
 
-  border: 2px solid #e7eaf3;
+  border-bottom: 1px solid #3fb0ac;
 }
 
 .main-table a {
@@ -471,6 +477,53 @@ body {
   font-weight: 700;
   color: #3fb0ac;
   font-size: 16px;
+}
+
+.error-content {
+  display: inline-block;
+
+  width: 100%;
+
+  padding: 100px 0px;
+
+  text-align: center;
+}
+
+.failed-icon {
+  display: inline-block;
+
+  width: 150px;
+  height: 150px;
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url("../public/images/failed.svg");
+}
+
+.error-data {
+  width: 100%;
+
+  padding-top: 20px;
+
+  font-size: 32px;
+  color: #3fb0ac;
+  font-weight: 700;
+  text-align: center;
+}
+
+.mb10 {
+  margin-bottom: 10px;
+}
+
+.btn-error-holder {
+  display: inline-block;
+
+  width: 100%;
+
+  margin-top: 20px;
+
+  text-align: center;
 }
 
 @media (max-width: 900px) {
