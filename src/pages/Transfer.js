@@ -131,14 +131,18 @@ const Transfer = () => {
           JSON.stringify(queryInfo.toHuman(), null, 2)
         );
 
-        let value = parseInt(extrinctsInfo.method.args.value);
+        let value = extrinctsInfo.method.args.value
+          ? parseInt(extrinctsInfo.method.args.value)
+          : 0;
         let extendValue = value * 1000000000000000;
         let finalValue = extendValue / 1000000000000;
 
         let object = {
           value: finalValue + " P3D",
           sender: extrinctsInfo.signer.Id,
-          destination: extrinctsInfo.method.args.dest.Id,
+          destination: extrinctsInfo.method.args.dest
+            ? extrinctsInfo.method.args.dest.Id
+            : "-",
           partialFee: parsedInfo.partialFee,
           estimatedFee: estimatedFee + " mP3D",
         };
@@ -224,7 +228,7 @@ const Transfer = () => {
                 <ListInfo
                   title={"Destination (to)"}
                   info={destination}
-                  canCopy={true}
+                  canCopy={destination !== "-" ? true : false}
                 />
               )}
               {value && (

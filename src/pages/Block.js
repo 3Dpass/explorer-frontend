@@ -168,7 +168,7 @@ const Block = () => {
 
       if (type === "logs") {
         array.push([
-          { val: indexEvent, url: "/extrinsic/" + indexEvent },
+          { val: indexEvent, url: "/log/" + indexEvent },
           { val: item.blockNumber, url: "/block/" + item.blockNumber },
           { val: item.typeName },
         ]);
@@ -176,8 +176,8 @@ const Block = () => {
 
       if (type === "events") {
         array.push([
-          { val: indexEvent, url: "/extrinsic/" + indexEvent },
-          { val: indexEvent, url: "/extrinsic/" + indexEvent },
+          { val: indexEvent, url: "/event/" + indexEvent },
+          { val: indexEvent, url: "/event/" + indexEvent },
           { val: item.eventModule },
           { val: item.eventName },
         ]);
@@ -327,7 +327,9 @@ const Block = () => {
             </div>
           </>
         )}
-        {errorData && <ErrorData error={"No available data for Block"} />}
+        {errorData && (
+          <ErrorData error={"No available data for Block #" + number} />
+        )}
       </div>
     </div>
   );

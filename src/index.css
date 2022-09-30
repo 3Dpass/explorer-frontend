@@ -105,8 +105,7 @@ body {
 }
 
 .block-info {
-  padding-top: 10px;
-
+  text-align: left;
   font-size: 14px;
   font-weight: 400;
   color: #303030;
@@ -320,7 +319,7 @@ body {
 }
 
 .main-table th {
-  padding: 8px 10px;
+  padding: 12px 5px;
 
   text-align: left;
   font-size: 16px;
@@ -336,8 +335,9 @@ body {
   padding: 12px 5px;
 
   text-align: left;
-  font-size: 16px;
+  font-size: 14px;
   color: #303030;
+  word-break: break-word;
 
   background-color: #fff;
 
@@ -352,6 +352,7 @@ body {
 
   color: #3fb0ac;
   text-decoration: none;
+  font-weight: 700;
 
   border: 0px;
 }
@@ -428,10 +429,13 @@ body {
   display: inline-block;
 
   width: 100%;
+  max-width: 130px;
 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  vertical-align: top;
 }
 
 .code-btn-holder {
@@ -524,6 +528,10 @@ body {
   margin-top: 20px;
 
   text-align: center;
+}
+
+a {
+  text-decoration: none;
 }
 
 @media (max-width: 900px) {

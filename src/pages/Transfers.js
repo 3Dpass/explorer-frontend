@@ -15,7 +15,7 @@ const Blocks = () => {
     "From",
     "To",
     "Value",
-    "Block Time",
+    "Time",
   ];
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const Blocks = () => {
           val: item.blockNumber,
           url: "/block/" + item.blockNumber,
         },
-        { val: "Faucet" },
+        { val: item.fromMultiAddressAccountId },
         { val: item.toMultiAddressAccountId },
         { val: item.value / 1000000000000 + " P3D" },
         { val: moment(item.blockDatetime).fromNow() },
