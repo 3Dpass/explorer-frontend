@@ -1,18 +1,28 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 import moment from "moment";
 
 const TransferPreview = ({ transfer }) => {
+  const navigate = useNavigate();
   const {
     blockNumber,
     extrinsicIdx,
+    eventIdx,
     toMultiAddressAccountId,
     fromMultiAddressAccountId,
     value,
     blockDatetime,
   } = transfer;
 
+  const openAccount = (e, account) => {
+    e.preventDefault();
+    navigate("account/" + account);
+  };
+
   return (
-    <Link to={"/extrinsic/" + blockNumber + "-" + extrinsicIdx}>
+    <Link
+      to={"/extrinsic/" + blockNumber + "-" + extrinsicIdx + "/" + eventIdx}
+    >
       <div className="block-container">
         <div className="left-block-content">
           <div className="block-title">
@@ -24,8 +34,20 @@ const TransferPreview = ({ transfer }) => {
           <div className="block-time">{moment(blockDatetime).fromNow()}</div>
         </div>
         <div className="block-info">
-          From <span className="ellipsis">{fromMultiAddressAccountId}</span> to{" "}
-          <span className="ellipsis" title={toMultiAddressAccountId}>
+          From{" "}
+          <span
+            className="ellipsis"
+            title={fromMultiAddressAccountId}
+            onClick={(e) => openAccount(e, fromMultiAddressAccountId)}
+          >
+            {fromMultiAddressAccountId}
+          </span>{" "}
+          to{" "}
+          <span
+            className="ellipsis"
+            title={toMultiAddressAccountId}
+            onClick={(e) => openAccount(e, toMultiAddressAccountId)}
+          >
             {toMultiAddressAccountId}
           </span>
         </div>

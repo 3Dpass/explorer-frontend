@@ -185,9 +185,9 @@ const Block = () => {
 
       if (type === "extrincts") {
         array.push([
-          { val: indexEvent, url: "/extrinsic/" + indexEvent },
+          { val: indexEvent },
           { val: item.hash },
-          { val: item.complete === 1 ? "Finalized" : "Not Finalized" },
+          { val: item.complete === 1 ? "Success" : "Not Success" },
         ]);
       }
     }
@@ -249,7 +249,7 @@ const Block = () => {
               />
               <ListInfo
                 title={"Status"}
-                info={complete === 1 ? "Finalized" : "Not Finalized"}
+                info={complete === 1 ? "Success" : "Not Success"}
                 canCopy={false}
               />
               <ListInfo title={"Hash"} info={hash} canCopy={true} />

@@ -15,13 +15,14 @@ const Blocks = () => {
     "Events",
     "Logs",
     "Extrinsics",
+    "Status",
     "Time",
   ];
 
   useEffect(() => {
     const getBlocks = async () => {
       const postData = {
-        query: `query{getBlocks(pageKey: "${pageKey}", pageSize: 12){pageInfo{pageSize, pageNext, pagePrev}, objects{number, parentNumber, parentHash, stateRoot, hash, datetime, totalWeight, countExtrinsics, countEvents, countLogs, specName}}}`,
+        query: `query{getBlocks(pageKey: "${pageKey}", pageSize: 12){pageInfo{pageSize, pageNext, pagePrev}, objects{number, parentNumber, parentHash, stateRoot, hash, datetime, totalWeight, countExtrinsics, countEvents, countLogs, specName, complete}}}`,
       };
 
       const response = await axiosInstance.post("", postData);
@@ -45,6 +46,7 @@ const Blocks = () => {
         { val: item.countEvents },
         { val: item.countLogs },
         { val: item.countExtrinsics },
+        { val: item.complete ? "Success" : "Not Success" },
         { val: moment(item.datetime).fromNow() },
       ]);
     }

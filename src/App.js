@@ -2,6 +2,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import Account from "./pages/Account";
 import Block from "./pages/Block";
 import Blocks from "./pages/Blocks";
 import Event from "./pages/Event";
@@ -21,9 +22,10 @@ const App = () => {
         <Route path="/blocks" element={<Blocks />} />
         <Route path="/transfers" element={<Transfers />} />
         <Route path="/block/:number" element={<Block />} />
-        <Route path="/extrinsic/:number" element={<Transfer />} />
+        <Route path="/extrinsic/:number/:eventId" element={<Transfer />} />
         <Route path="/log/:number" element={<Log />} />
         <Route path="/event/:number" element={<Event />} />
+        <Route path="/account/:account" element={<Account />} />
       </Routes>
       <ToastContainer
         position="top-right"

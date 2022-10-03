@@ -15,6 +15,7 @@ const Blocks = () => {
     "From",
     "To",
     "Value",
+    "Status",
     "Time",
   ];
 
@@ -41,15 +42,28 @@ const Blocks = () => {
       array.push([
         {
           val: item.blockNumber + "-" + item.extrinsicIdx,
-          url: "/extrinsic/" + item.blockNumber + "-" + item.extrinsicIdx,
+          url:
+            "/extrinsic/" +
+            item.blockNumber +
+            "-" +
+            item.extrinsicIdx +
+            "/" +
+            item.eventIdx,
         },
         {
           val: item.blockNumber,
           url: "/block/" + item.blockNumber,
         },
-        { val: item.fromMultiAddressAccountId },
-        { val: item.toMultiAddressAccountId },
+        {
+          val: item.fromMultiAddressAccountId,
+          url: "/account/" + item.fromMultiAddressAccountId,
+        },
+        {
+          val: item.toMultiAddressAccountId,
+          url: "/account/" + item.toMultiAddressAccountId,
+        },
         { val: item.value / 1000000000000 + " P3D" },
+        { val: item.complete ? "Success" : "Not Success" },
         { val: moment(item.blockDatetime).fromNow() },
       ]);
     }

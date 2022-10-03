@@ -64,7 +64,7 @@ const Log = () => {
           />
           <ListInfo
             title={"Status"}
-            info={complete ? "Finalized" : "Not Finalized"}
+            info={complete ? "Success" : "Not Success"}
             canCopy={false}
           />
           <ListInfo title={"Spec Name"} info={specName} canCopy={false} />

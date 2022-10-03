@@ -8,9 +8,11 @@ import { useParams } from "react-router-dom";
 const Event = () => {
   const { number } = useParams();
   const [event, setEvent] = useState({});
+  const [eventId, setEventId] = useState(0);
 
   useEffect(() => {
     const splitParam = number.split("-");
+    setEventId(parseInt(splitParam[1]));
     const getEvent = async (block, number) => {
       const postEvent = {
         query: `{
@@ -42,6 +44,7 @@ const Event = () => {
   }, [number]);
 
   const {
+    attributes,
     blockDatetime,
     blockHash,
     complete,
@@ -51,6 +54,8 @@ const Event = () => {
     specName,
     specVersion,
   } = event;
+
+  const parsedAttributes = attributes ? JSON.parse(attributes) : {};
 
   return (
     <div className="page-content">
@@ -70,9 +75,42 @@ const Event = () => {
           <ListInfo title={"Block Hash"} info={blockHash} canCopy={true} />
           <ListInfo
             title={"Status"}
-            info={complete ? "Finalized" : "Not Finalized"}
+            info={complete ? "Success" : "Not Success"}
             canCopy={false}
           />
+          {eventId === 0 && (
+            <>
+              <ListInfo
+                title={"Class"}
+                info={parsedAttributes.class}
+                canCopy={false}
+              />
+              <ListInfo
+                title={"Weight"}
+                info={parsedAttributes.weight}
+                canCopy={false}
+              />
+              <ListInfo
+                title={"Pays Fee"}
+                info={parsedAttributes.pays_fee}
+                canCopy={false}
+              />
+            </>
+          )}
+          {eventId > 0 && (
+            <>
+              <ListInfo
+                title={"Author Id"}
+                info={parsedAttributes[0]}
+                canCopy={true}
+              />
+              <ListInfo
+                title={"Value"}
+                info={parsedAttributes[1]}
+                canCopy={false}
+              />
+            </>
+          )}
           <ListInfo title={"Event Module"} info={eventModule} canCopy={false} />
           <ListInfo title={"Event Name"} info={eventName} canCopy={false} />
           <ListInfo title={"Phase Name"} info={phaseName} canCopy={false} />

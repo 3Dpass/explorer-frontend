@@ -9,7 +9,7 @@ import moment from "moment";
 import { useParams } from "react-router-dom";
 
 const Transfer = () => {
-  const { number } = useParams();
+  const { number, eventId } = useParams();
   const [extrinsic, setExtrinsic] = useState({});
   const [extrinsicInfo, setExtrinsicInfo] = useState({});
   const eventsHeader = [
@@ -69,6 +69,18 @@ const Transfer = () => {
 
       if (response.data.data.getExtrinsic) {
         setExtrinsic(response.data.data.getExtrinsic);
+
+        const postTransfer = {
+          query: `{
+            getTransfer(filters:{blockNumber: ${blockNumber}, eventIdx: ${eventId} })
+            {
+              value
+              
+            }
+          }`,
+        };
+
+        const responseTransfer = await axiosInstance.post("", postTransfer);
 
         let eventsArray = [];
         const postEvent = {
@@ -131,14 +143,10 @@ const Transfer = () => {
           JSON.stringify(queryInfo.toHuman(), null, 2)
         );
 
-        let value = extrinctsInfo.method.args.value
-          ? parseInt(extrinctsInfo.method.args.value)
-          : 0;
-        let extendValue = value * 1000000000000000;
-        let finalValue = extendValue / 1000000000000;
-
         let object = {
-          value: finalValue + " P3D",
+          value:
+            responseTransfer.data.data.getTransfer.value / 1000000000000 +
+            " P3D",
           sender: extrinctsInfo.signer.Id,
           destination: extrinctsInfo.method.args.dest
             ? extrinctsInfo.method.args.dest.Id
@@ -154,7 +162,7 @@ const Transfer = () => {
     };
 
     getExtrinsic(splitParam[0], splitParam[1]);
-  }, [number]);
+  }, [number, eventId]);
 
   const prepareTableArray = (arr, type) => {
     if (!arr.length) {
@@ -255,7 +263,7 @@ const Transfer = () => {
               />
               <ListInfo
                 title={"Result"}
-                info={complete === 1 ? "Finalized" : "Not Finalized"}
+                info={complete === 1 ? "Success" : "Not Success"}
                 canCopy={false}
               />
               {callArguments && (

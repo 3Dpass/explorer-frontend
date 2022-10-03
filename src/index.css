@@ -25,7 +25,7 @@ body {
   display: inline-block;
 
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
 
   text-align: center;
 }
@@ -264,7 +264,7 @@ body {
   color: #3fb0ac;
   font-weight: 700;
 
-  vertical-align: middle;
+  vertical-align: top;
 }
 
 .right-info {
@@ -278,7 +278,7 @@ body {
   font-weight: 500;
   word-break: break-all;
 
-  vertical-align: middle;
+  vertical-align: top;
 }
 
 .copy {
@@ -307,8 +307,6 @@ body {
 }
 
 .table-container {
-  max-height: auto;
-
   margin-top: 20px;
 }
 
@@ -332,7 +330,7 @@ body {
 }
 
 .main-table td {
-  padding: 12px 5px;
+  padding: 12px 4px;
 
   text-align: left;
   font-size: 14px;
@@ -386,6 +384,7 @@ body {
 .menu-item.active {
   font-weight: 700;
   color: #3fb0ac;
+  font-size: 15px;
 }
 
 .header {
@@ -404,7 +403,7 @@ body {
   display: inline-block;
 
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
 
   text-align: left;
 }
@@ -532,6 +531,104 @@ body {
 
 a {
   text-decoration: none;
+}
+
+.graph-holder-account {
+  display: inline-block;
+
+  vertical-align: middle;
+}
+
+.graph-info-account {
+  display: inline-block;
+
+  width: calc(100% - 200px);
+  height: 200px;
+
+  padding: 55px 15px;
+
+  vertical-align: middle;
+}
+
+.one-graph-info {
+  display: inline-block;
+
+  width: 100%;
+
+  margin-bottom: 20px;
+
+  text-align: left;
+}
+
+.graph-color {
+  display: inline-block;
+
+  width: 30px;
+  height: 30px;
+
+  margin-right: 15px;
+
+  border-radius: 50%;
+
+  vertical-align: middle;
+}
+
+.graph-label {
+  display: inline-block;
+
+  width: calc(100% - 50px);
+
+  color: #000;
+  font-size: 14px;
+
+  vertical-align: middle;
+}
+
+.block-span {
+  display: block;
+  width: 100%;
+}
+
+.graph-icon {
+  background-image: url("../public/images/graph.svg");
+}
+
+.account-icon {
+  background-image: url("../public/images/account.svg");
+}
+
+.qr-code-holder {
+  display: inline-block;
+
+  width: 100%;
+
+  margin-top: 20px;
+}
+
+.account-table-container {
+  width: calc(100% - 20px);
+
+  margin-top: 20px;
+}
+
+.loading-info {
+  width: 100%;
+
+  padding: 80px 0px;
+
+  font-size: 16px;
+  text-align: center;
+}
+
+.empty-state {
+  width: 100%;
+
+  padding: 40px 0px;
+
+  font-size: 24px;
+  text-align: center;
+  color: #3fb0ac;
+  font-weight: 500;
 }
 
 @media (max-width: 900px) {
