@@ -2,6 +2,7 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import { Cell, Pie, PieChart } from "recharts";
 import React, { useEffect, useState } from "react";
 
+import { Keyring } from "@polkadot/keyring";
 import ListInfo from "../components/ListInfo";
 import Pagination from "../components/Pagination";
 import QRCode from "react-qr-code";
@@ -26,6 +27,7 @@ const Account = () => {
   const [pageKeyFrom, setPageKeyFrom] = useState(1);
   const [paginationFrom, setPaginationFrom] = useState({});
   const [transfersFrom, setTransferFrom] = useState([]);
+  const [miner, setMiner] = useState("");
 
   useEffect(() => {
     const getAccountInfo = async (acc) => {
@@ -57,6 +59,10 @@ const Account = () => {
       setAccountInfo(objectAccount);
       setLoading(false);
     };
+
+    const keyring = new Keyring();
+    const minerEncoded = keyring.encodeAddress(account, 71);
+    setMiner(minerEncoded);
 
     getAccountInfo(account);
   }, [account]);
@@ -168,6 +174,7 @@ const Account = () => {
             </div>
           </div>
           <ListInfo title={"Account Id"} info={account} canCopy={true} />
+          <ListInfo title={"Miner"} info={miner} canCopy={true} />
           <div className="qr-code-holder">
             <QRCode
               size={120}
@@ -180,10 +187,7 @@ const Account = () => {
           <div className="list-header">
             <div className="list-header-content">
               <div className="list-icon graph-icon"></div>
-              <div className="list-title">
-                Balance
-                {!loading && <span> ({accoutInfo.free} Total)</span>}
-              </div>
+              <div className="list-title">Balance</div>
             </div>
           </div>
           {!loading && (
@@ -218,6 +222,7 @@ const Account = () => {
                     </div>
                   </div>
                 ))}
+                <div className="one-graph-info">Total {accoutInfo.free}</div>
               </div>
             </>
           )}

@@ -260,7 +260,12 @@ const Block = () => {
               />
               <ListInfo title={"State Root"} info={stateRoot} canCopy={false} />
               {authorId !== "" && (
-                <ListInfo title={"Author Id"} info={authorId} canCopy={true} />
+                <ListInfo
+                  title={"Author Id"}
+                  info={authorId}
+                  canCopy={true}
+                  url={"/account/" + authorId}
+                />
               )}
               {miner !== "" && (
                 <ListInfo title={"Miner"} info={miner} canCopy={true} />

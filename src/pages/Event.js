@@ -103,10 +103,11 @@ const Event = () => {
                 title={"Author Id"}
                 info={parsedAttributes[0]}
                 canCopy={true}
+                url={"/account/" + parsedAttributes[0]}
               />
               <ListInfo
                 title={"Value"}
-                info={parsedAttributes[1]}
+                info={parseInt(parsedAttributes[1]) / 1000000000000 + " P3D"}
                 canCopy={false}
               />
             </>

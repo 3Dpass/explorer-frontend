@@ -264,7 +264,7 @@ body {
   color: #3fb0ac;
   font-weight: 700;
 
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .right-info {
@@ -278,7 +278,7 @@ body {
   font-weight: 500;
   word-break: break-all;
 
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .copy {
@@ -545,7 +545,7 @@ a {
   width: calc(100% - 200px);
   height: 200px;
 
-  padding: 55px 15px;
+  padding: 35px 15px;
 
   vertical-align: middle;
 }
@@ -629,6 +629,19 @@ a {
   text-align: center;
   color: #3fb0ac;
   font-weight: 500;
+}
+
+.info-span,
+.info-url {
+  display: inline-block;
+
+  width: calc(100% - 50px);
+
+  vertical-align: middle;
+}
+
+.info-url {
+  color: #3fb0ac;
 }
 
 @media (max-width: 900px) {

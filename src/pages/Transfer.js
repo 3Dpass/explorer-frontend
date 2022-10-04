@@ -221,7 +221,12 @@ const Transfer = () => {
                 info={moment(blockDatetime).fromNow()}
                 canCopy={false}
               />
-              <ListInfo title={"Block"} info={blockNumber} canCopy={false} />
+              <ListInfo
+                title={"Block"}
+                info={blockNumber}
+                canCopy={false}
+                url={"/block/" + blockNumber}
+              />
               <ListInfo title={"Extrinsic Hash"} info={hash} canCopy={true} />
               <ListInfo title={"Module"} info={callModule} canCopy={false} />
               <ListInfo title={"Call"} info={callName} canCopy={false} />

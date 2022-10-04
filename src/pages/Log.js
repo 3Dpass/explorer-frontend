@@ -56,7 +56,12 @@ const Log = () => {
               <div className="list-title">Log#{number}</div>
             </div>
           </div>
-          <ListInfo title={"Block"} info={blockNumber} canCopy={false} />
+          <ListInfo
+            title={"Block"}
+            info={blockNumber}
+            canCopy={false}
+            url={"/block/" + blockNumber}
+          />
           <ListInfo
             title={"Block Time"}
             info={moment(blockDatetime).fromNow()}
