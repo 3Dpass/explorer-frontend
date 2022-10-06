@@ -20,11 +20,11 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #5fe9e4;
+  background: #3fb0ac;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3fb0ac;
+  background: #5fe9e4;
 }
 
 .page-content {
@@ -686,11 +686,11 @@ a {
   font-size: 16px;
   color: #303030;
 
-  border: 1px solid #868686;
+  border: 1px solid #e7eaf3;
   border-radius: 5px;
 }
 
-.main-input:focus {
+input:focus {
   border: 1px solid #3fb0ac;
 }
 
@@ -710,6 +710,53 @@ input[type="number"] {
 
 .error-content .main-btn {
   width: 150px;
+}
+
+.search-container {
+  display: inline-block;
+
+  width: 100%;
+
+  margin-bottom: 40px;
+
+  text-align: center;
+}
+
+.search-input {
+  display: inline-block;
+
+  width: 500px;
+
+  padding: 15px 20px;
+
+  font-size: 18px;
+  color: #303030;
+  font-weight: 400;
+
+  background-color: #fff;
+
+  border: 1px solid #e7eaf3;
+
+  vertical-align: middle;
+}
+
+input::placeholder {
+  color: #727171;
+}
+
+.search-btn {
+  display: inline-block;
+
+  padding: 15px 20px;
+
+  font-size: 18px;
+  color: #fff;
+  font-weight: 500;
+
+  background-color: #3fb0ac;
+
+  vertical-align: middle;
+  cursor: pointer;
 }
 
 @media (max-width: 900px) {
