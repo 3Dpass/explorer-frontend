@@ -31,6 +31,7 @@ const Blocks = () => {
     };
     getTransfers();
   }, [pageKey]);
+
   const prepareTableArray = (arr) => {
     if (!arr.length) {
       return [];

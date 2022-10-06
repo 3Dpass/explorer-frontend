@@ -30,6 +30,15 @@ const Header = () => {
           >
             Transfers
           </Link>
+          <Link
+            to="/events"
+            className={classNames({
+              "header-item": true,
+              active: location === "events",
+            })}
+          >
+            Events
+          </Link>
         </div>
       </div>
     </header>

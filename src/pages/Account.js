@@ -9,6 +9,7 @@ import QRCode from "react-qr-code";
 import Table from "../components/Table";
 import axiosInstance from "../api/axios";
 import classNames from "classnames";
+import moment from "moment";
 import { useParams } from "react-router-dom";
 
 const Account = () => {
@@ -16,7 +17,7 @@ const Account = () => {
   const [accoutInfo, setAccountInfo] = useState({});
   const [activeMenu, setActiveMenu] = useState("Extrinsics");
   const [extrincts, setExtrincts] = useState([]);
-  const extrinctsHeaders = ["Extrinsic ID", "Hash", "Completed"];
+  const extrinctsHeaders = ["Extrinsic ID", "Hash", "Time", "Result"];
   const [pageKeyE, setPageKeyE] = useState(1);
   const [paginationE, setPaginationE] = useState({});
   const [loading, setLoading] = useState(true);
@@ -81,7 +82,7 @@ const Account = () => {
 
   const getExtrincts = async (acc, pageKey) => {
     const getTransfers = {
-      query: `query{getExtrinsics(pageKey: "${pageKey}", pageSize: 10, filters: {multiAddressAccountId: "${acc}"}){pageInfo{pageSize, pageNext, pagePrev} objects{ blockNumber, extrinsicIdx, hash, complete }}}`,
+      query: `query{getExtrinsics(pageKey: "${pageKey}", pageSize: 10, filters: {multiAddressAccountId: "${acc}"}){pageInfo{pageSize, pageNext, pagePrev} objects{ blockNumber, blockDatetime, extrinsicIdx, hash, complete }}}`,
     };
 
     const responseExtrincts = await axiosInstance.post("", getTransfers);
@@ -125,6 +126,7 @@ const Account = () => {
         array.push([
           { val: item.blockNumber + "-" + item.extrinsicIdx },
           { val: item.hash },
+          { val: moment(item.blockDatetime).fromNow() },
           { val: item.complete === 1 ? "Success" : "Not Success" },
         ]);
       }
@@ -174,7 +176,7 @@ const Account = () => {
             </div>
           </div>
           <ListInfo title={"Account Id"} info={account} canCopy={true} />
-          <ListInfo title={"Miner"} info={miner} canCopy={true} />
+          <ListInfo title={"Address"} info={miner} canCopy={true} />
           <div className="qr-code-holder">
             <QRCode
               size={120}
@@ -218,11 +220,13 @@ const Account = () => {
                     ></div>
                     <div className="graph-label">
                       {item.name}{" "}
-                      <span className="block-span">{item.value}</span>
+                      <span className="block-span">{item.value} P3D</span>
                     </div>
                   </div>
                 ))}
-                <div className="one-graph-info">Total {accoutInfo.free}</div>
+                <div className="one-graph-info">
+                  Total Balance {accoutInfo.free} P3D
+                </div>
               </div>
             </>
           )}

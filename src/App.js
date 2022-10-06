@@ -6,6 +6,7 @@ import Account from "./pages/Account";
 import Block from "./pages/Block";
 import Blocks from "./pages/Blocks";
 import Event from "./pages/Event";
+import Events from "./pages/Events";
 import Header from "./components/Header";
 import Home from "./pages/Home";
 import Log from "./pages/Log";
@@ -26,6 +27,7 @@ const App = () => {
         <Route path="/log/:number" element={<Log />} />
         <Route path="/event/:number" element={<Event />} />
         <Route path="/account/:account" element={<Account />} />
+        <Route path="/events" element={<Events />} />
       </Routes>
       <ToastContainer
         position="top-right"

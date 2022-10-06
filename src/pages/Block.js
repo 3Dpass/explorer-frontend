@@ -1,3 +1,4 @@
+import { ApiPromise, WsProvider } from "@polkadot/api";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -20,6 +21,7 @@ const Block = () => {
   const [authorId, setAuthorId] = useState("");
   const [miner, setMiner] = useState("");
   const [errorData, setErrorData] = useState(false);
+  const [validator, setValidator] = useState("");
   const logsHeaders = ["Log Index", "Block", "Type"];
   const eventsHeader = [
     "Event ID",
@@ -53,6 +55,11 @@ const Block = () => {
       const response = await axiosInstance.post("", postData);
       if (response.data.data.getBlock) {
         setBlock(response.data.data.getBlock);
+
+        const wsProvider = new WsProvider("wss://rpc2.3dpass.org");
+        const api = await ApiPromise.create({ provider: wsProvider });
+        const simo = await api.query.validatorSet.authors(number);
+        setValidator(simo.toHuman());
 
         let extrinctArray = [];
         const countExtrinsics = response.data.data.getBlock.countExtrinsics;
@@ -252,6 +259,9 @@ const Block = () => {
                 info={complete === 1 ? "Success" : "Not Success"}
                 canCopy={false}
               />
+              {validator !== "" && (
+                <ListInfo title={"Validator"} info={validator} canCopy={true} />
+              )}
               <ListInfo title={"Hash"} info={hash} canCopy={true} />
               <ListInfo
                 title={"Parent Hash"}
