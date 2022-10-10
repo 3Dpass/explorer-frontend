@@ -7,7 +7,6 @@ const TransferPreview = ({ transfer }) => {
   const {
     blockNumber,
     extrinsicIdx,
-    eventIdx,
     toMultiAddressAccountId,
     fromMultiAddressAccountId,
     value,
@@ -20,9 +19,7 @@ const TransferPreview = ({ transfer }) => {
   };
 
   return (
-    <Link
-      to={"/extrinsic/" + blockNumber + "-" + extrinsicIdx + "/" + eventIdx}
-    >
+    <Link to={"/extrinsic/" + blockNumber + "-" + extrinsicIdx}>
       <div className="block-container">
         <div className="left-block-content">
           <div className="block-title">

@@ -9,7 +9,7 @@ import moment from "moment";
 import { useParams } from "react-router-dom";
 
 const Transfer = () => {
-  const { number, eventId } = useParams();
+  const { number } = useParams();
   const [extrinsic, setExtrinsic] = useState({});
   const [extrinsicInfo, setExtrinsicInfo] = useState({});
   const eventsHeader = [
@@ -64,23 +64,20 @@ const Transfer = () => {
                 }
               }`,
       };
-
       const response = await axiosInstance.post("", postData);
 
       if (response.data.data.getExtrinsic) {
         setExtrinsic(response.data.data.getExtrinsic);
 
-        const postTransfer = {
-          query: `{
-            getTransfer(filters:{blockNumber: ${blockNumber}, eventIdx: ${eventId} })
-            {
-              value
-              
-            }
-          }`,
-        };
-
-        const responseTransfer = await axiosInstance.post("", postTransfer);
+        let transferValue = 0;
+        let parsedArguments = JSON.parse(
+          response.data.data.getExtrinsic.callArguments
+        );
+        for (let a = 0; a < parsedArguments.length; a++) {
+          if (parsedArguments[a].name === "value") {
+            transferValue = parsedArguments[a].value;
+          }
+        }
 
         let eventsArray = [];
         const postEvent = {
@@ -144,9 +141,7 @@ const Transfer = () => {
         );
 
         let object = {
-          value:
-            responseTransfer.data.data.getTransfer.value / 1000000000000 +
-            " P3D",
+          value: transferValue / 1000000000000 + " P3D",
           sender: extrinctsInfo.signer.Id,
           destination: extrinctsInfo.method.args.dest
             ? extrinctsInfo.method.args.dest.Id
@@ -162,7 +157,7 @@ const Transfer = () => {
     };
 
     getExtrinsic(splitParam[0], splitParam[1]);
-  }, [number, eventId]);
+  }, [number]);
 
   const prepareTableArray = (arr, type) => {
     if (!arr.length) {

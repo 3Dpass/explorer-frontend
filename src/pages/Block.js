@@ -23,12 +23,7 @@ const Block = () => {
   const [errorData, setErrorData] = useState(false);
   const [validator, setValidator] = useState("");
   const logsHeaders = ["Log Index", "Block", "Type"];
-  const eventsHeader = [
-    "Event ID",
-    "Extrinct ID",
-    "Event Module",
-    "Event Name",
-  ];
+  const eventsHeader = ["Event ID", "Event Module", "Event Name"];
   const extrinctsHeaders = ["Extrinsic ID", "Hash", "Completed"];
 
   useEffect(() => {
@@ -72,7 +67,7 @@ const Block = () => {
                 hash
                 complete
               }
-          }`,
+            }`,
           };
 
           const responseExtrincts = await axiosInstance.post("", postEXtrinct);
@@ -184,7 +179,6 @@ const Block = () => {
       if (type === "events") {
         array.push([
           { val: indexEvent, url: "/event/" + indexEvent },
-          { val: indexEvent, url: "/event/" + indexEvent },
           { val: item.eventModule },
           { val: item.eventName },
         ]);
@@ -192,7 +186,7 @@ const Block = () => {
 
       if (type === "extrincts") {
         array.push([
-          { val: indexEvent },
+          { val: indexEvent, url: "/extrinsic/" + indexEvent },
           { val: item.hash },
           { val: item.complete === 1 ? "Success" : "Not Success" },
         ]);

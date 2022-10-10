@@ -23,7 +23,7 @@ const App = () => {
         <Route path="/blocks" element={<Blocks />} />
         <Route path="/transfers" element={<Transfers />} />
         <Route path="/block/:number" element={<Block />} />
-        <Route path="/extrinsic/:number/:eventId" element={<Transfer />} />
+        <Route path="/extrinsic/:number" element={<Transfer />} />
         <Route path="/log/:number" element={<Log />} />
         <Route path="/event/:number" element={<Event />} />
         <Route path="/account/:account" element={<Account />} />

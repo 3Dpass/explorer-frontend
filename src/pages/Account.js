@@ -124,7 +124,10 @@ const Account = () => {
 
       if (type === "extrincts") {
         array.push([
-          { val: item.blockNumber + "-" + item.extrinsicIdx },
+          {
+            val: item.blockNumber + "-" + item.extrinsicIdx,
+            url: "/extrinsic/" + item.blockNumber + "-" + item.extrinsicIdx,
+          },
           { val: item.hash },
           { val: moment(item.blockDatetime).fromNow() },
           { val: item.complete === 1 ? "Success" : "Not Success" },
@@ -136,13 +139,7 @@ const Account = () => {
           { val: item.blockNumber, url: "/block/" + item.blockNumber },
           {
             val: item.blockNumber + "-" + item.extrinsicIdx,
-            url:
-              "/extrinsic/" +
-              item.blockNumber +
-              "-" +
-              item.extrinsicIdx +
-              "/" +
-              item.eventIdx,
+            url: "/extrinsic/" + item.blockNumber + "-" + item.extrinsicIdx,
           },
           {
             val: item.fromMultiAddressAccountId,

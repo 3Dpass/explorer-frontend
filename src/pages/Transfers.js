@@ -43,13 +43,7 @@ const Blocks = () => {
       array.push([
         {
           val: item.blockNumber + "-" + item.extrinsicIdx,
-          url:
-            "/extrinsic/" +
-            item.blockNumber +
-            "-" +
-            item.extrinsicIdx +
-            "/" +
-            item.eventIdx,
+          url: "/extrinsic/" + item.blockNumber + "-" + item.extrinsicIdx,
         },
         {
           val: item.blockNumber,
