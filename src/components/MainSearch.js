@@ -1,6 +1,11 @@
 const MainSearch = ({ placeholder, type, value, onChange, triggerSearch }) => {
+  const submitSearch = (e) => {
+    e.preventDefault();
+    triggerSearch();
+  };
+
   return (
-    <div className="search-container">
+    <form className="search-container" onSubmit={(e) => submitSearch(e)}>
       <input
         type={type}
         className="search-input"
@@ -8,10 +13,10 @@ const MainSearch = ({ placeholder, type, value, onChange, triggerSearch }) => {
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
-      <div className="search-btn" onClick={() => triggerSearch()}>
+      <button type="submit" className="search-btn">
         Search
-      </div>
-    </div>
+      </button>
+    </form>
   );
 };
 

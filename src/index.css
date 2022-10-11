@@ -31,6 +31,7 @@ body {
   display: inline-block;
 
   width: 100%;
+  min-height: calc(100vh - 310px);
 
   padding: 50px 10px;
 
@@ -757,6 +758,104 @@ input::placeholder {
 
   vertical-align: middle;
   cursor: pointer;
+
+  border: 1px solid #3fb0ac;
+}
+
+.clear {
+  clear: both;
+}
+
+.footer {
+  display: inline-block;
+
+  width: 100%;
+
+  padding: 40px 0px;
+
+  text-align: center;
+
+  background-color: #333;
+}
+
+.inner-footer {
+  display: inline-block;
+  width: 100%;
+
+  max-width: 1400px;
+
+  text-align: center;
+}
+
+.one-footer-section {
+  display: inline-block;
+
+  width: 33%;
+
+  text-align: center;
+
+  vertical-align: top;
+}
+
+.footer-section-title {
+  display: inline-block;
+
+  width: 100%;
+
+  padding-bottom: 20px;
+
+  font-size: 24px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.one-footer-info {
+  display: inline-block;
+
+  width: 100%;
+
+  padding-bottom: 15px;
+
+  font-size: 16px;
+  color: #fff;
+  font-weight: 400;
+}
+
+.one-footer-info:hover {
+  color: #3fb0ac;
+}
+
+.social-icon {
+  display: inline-block;
+
+  width: 40px;
+  height: 40px;
+
+  margin: 0px 10px;
+
+  background-color: #fff;
+  background-position: center;
+  background-size: 20px;
+  background-repeat: no-repeat;
+
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.social-icon:hover {
+  background-color: #bafffd;
+}
+
+.twitter-icon {
+  background-image: url("../public/images/twitter.svg");
+}
+
+.github-icon {
+  background-image: url("../public/images/github.svg");
+}
+
+.email-icon {
+  background-image: url("../public/images/email.svg");
 }
 
 @media (max-width: 900px) {

@@ -7,6 +7,7 @@ import Block from "./pages/Block";
 import Blocks from "./pages/Blocks";
 import Event from "./pages/Event";
 import Events from "./pages/Events";
+import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Home from "./pages/Home";
 import Log from "./pages/Log";
@@ -29,12 +30,14 @@ const App = () => {
         <Route path="/account/:account" element={<Account />} />
         <Route path="/events" element={<Events />} />
       </Routes>
+
       <ToastContainer
         position="top-right"
         hideProgressBar={true}
         type="info"
         autoClose={2500}
       />
+      <Footer />
     </BrowserRouter>
   );
 };

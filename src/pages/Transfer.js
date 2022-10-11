@@ -173,8 +173,8 @@ const Transfer = () => {
 
       if (type === "events") {
         array.push([
-          { val: indexEvent },
-          { val: indexEvent },
+          { val: indexEvent, url: "/event/" + indexEvent },
+          { val: indexEvent, url: "/event/" + indexEvent },
           { val: item.eventModule },
           { val: item.eventName },
         ]);
