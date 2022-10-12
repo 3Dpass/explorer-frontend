@@ -70,7 +70,7 @@ const Home = () => {
               <div className="list-icon cube-icon"></div>
               <div className="list-title">Blocks</div>
             </div>
-            <Link to="/blocks">
+            <Link to="/blocks/1">
               <div className="main-btn">View All</div>
             </Link>
           </div>
@@ -84,7 +84,7 @@ const Home = () => {
               <div className="list-icon transfer-icon"></div>
               <div className="list-title">Transfers</div>
             </div>
-            <Link to="/transfers">
+            <Link to="/transfers/1">
               <div className="main-btn">View All</div>
             </Link>
           </div>

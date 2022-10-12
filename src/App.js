@@ -21,14 +21,14 @@ const App = () => {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/blocks" element={<Blocks />} />
-        <Route path="/transfers" element={<Transfers />} />
+        <Route path="/blocks/:page" element={<Blocks />} />
+        <Route path="/transfers/:page" element={<Transfers />} />
         <Route path="/block/:number" element={<Block />} />
         <Route path="/extrinsic/:number" element={<Transfer />} />
         <Route path="/log/:number" element={<Log />} />
         <Route path="/event/:number" element={<Event />} />
         <Route path="/account/:account" element={<Account />} />
-        <Route path="/events" element={<Events />} />
+        <Route path="/events/:page" element={<Events />} />
       </Routes>
 
       <ToastContainer

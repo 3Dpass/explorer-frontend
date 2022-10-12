@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import MainInput from "../components/MainInput";
 import Pagination from "../components/Pagination";
@@ -8,8 +9,10 @@ import moment from "moment";
 import { toast } from "react-toastify";
 
 const Events = () => {
+  const { page } = useParams();
+  const navigate = useNavigate();
   const [events, setEvents] = useState([]);
-  const [pageKey, setPageKey] = useState(1);
+  const [pageKey, setPageKey] = useState(null);
   const [pagination, setPagination] = useState({});
   const headersTable = [
     "Block",
@@ -24,17 +27,23 @@ const Events = () => {
   const [filters, setFiltersString] = useState(``);
 
   useEffect(() => {
-    const getEvents = async () => {
-      const postData = {
-        query: `query{getEvents(pageKey: "${pageKey}", pageSize: 12, ${filters}) {pageInfo{pageSize, pageNext, pagePrev}, objects{blockNumber, eventIdx, extrinsicIdx, blockDatetime, event, eventModule, eventName}}}`,
+    setPageKey(page);
+  }, [page, pageKey]);
+
+  useEffect(() => {
+    if (pageKey) {
+      const getEvents = async () => {
+        const postData = {
+          query: `query{getEvents(pageKey: "${pageKey}", pageSize: 12, ${filters}) {pageInfo{pageSize, pageNext, pagePrev}, objects{blockNumber, eventIdx, extrinsicIdx, blockDatetime, event, eventModule, eventName}}}`,
+        };
+
+        const response = await axiosInstance.post("", postData);
+        setEvents(response.data.data.getEvents.objects);
+        setPagination(response.data.data.getEvents.pageInfo);
       };
 
-      const response = await axiosInstance.post("", postData);
-      setEvents(response.data.data.getEvents.objects);
-      setPagination(response.data.data.getEvents.pageInfo);
-    };
-
-    getEvents();
+      getEvents();
+    }
   }, [pageKey, filters]);
 
   const setFilters = () => {
@@ -92,6 +101,10 @@ const Events = () => {
     return array;
   };
 
+  const updatePage = (page) => {
+    navigate("/events/" + page.toString());
+  };
+
   return (
     <div className="page-content">
       <div className="main-inner">
@@ -137,7 +150,7 @@ const Events = () => {
           <Pagination
             pagePrev={pagination.pagePrev}
             pageNext={pagination.pageNext}
-            setPageKey={setPageKey}
+            setPageKey={updatePage}
           />
         </div>
       </div>

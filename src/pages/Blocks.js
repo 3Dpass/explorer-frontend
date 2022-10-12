@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Pagination from "../components/Pagination";
 import Table from "../components/Table";
@@ -6,8 +7,10 @@ import axiosInstance from "../api/axios";
 import moment from "moment";
 
 const Blocks = () => {
+  const { page } = useParams();
+  const navigate = useNavigate();
   const [blocks, setBlocks] = useState([]);
-  const [pageKey, setPageKey] = useState(1);
+  const [pageKey, setPageKey] = useState(null);
   const [pagination, setPagination] = useState({});
   const headersTable = [
     "Block",
@@ -20,16 +23,22 @@ const Blocks = () => {
   ];
 
   useEffect(() => {
-    const getBlocks = async () => {
-      const postData = {
-        query: `query{getBlocks(pageKey: "${pageKey}", pageSize: 12){pageInfo{pageSize, pageNext, pagePrev}, objects{number, parentNumber, parentHash, stateRoot, hash, datetime, totalWeight, countExtrinsics, countEvents, countLogs, specName, complete}}}`,
-      };
+    setPageKey(page);
+  }, [page, pageKey]);
 
-      const response = await axiosInstance.post("", postData);
-      setBlocks(response.data.data.getBlocks.objects);
-      setPagination(response.data.data.getBlocks.pageInfo);
-    };
-    getBlocks();
+  useEffect(() => {
+    if (pageKey) {
+      const getBlocks = async () => {
+        const postData = {
+          query: `query{getBlocks(pageKey: "${pageKey}", pageSize: 12){pageInfo{pageSize, pageNext, pagePrev}, objects{number, parentNumber, parentHash, stateRoot, hash, datetime, totalWeight, countExtrinsics, countEvents, countLogs, specName, complete}}}`,
+        };
+
+        const response = await axiosInstance.post("", postData);
+        setBlocks(response.data.data.getBlocks.objects);
+        setPagination(response.data.data.getBlocks.pageInfo);
+      };
+      getBlocks();
+    }
   }, [pageKey]);
 
   const prepareTableArray = (arr) => {
@@ -54,6 +63,10 @@ const Blocks = () => {
     return array;
   };
 
+  const updatePage = (page) => {
+    navigate("/blocks/" + page.toString());
+  };
+
   return (
     <div className="page-content">
       <div className="main-inner">
@@ -68,7 +81,7 @@ const Blocks = () => {
           <Pagination
             pagePrev={pagination.pagePrev}
             pageNext={pagination.pageNext}
-            setPageKey={setPageKey}
+            setPageKey={updatePage}
           />
         </div>
       </div>

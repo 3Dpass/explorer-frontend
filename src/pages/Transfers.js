@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Pagination from "../components/Pagination";
 import Table from "../components/Table";
@@ -6,8 +7,10 @@ import axiosInstance from "../api/axios";
 import moment from "moment";
 
 const Blocks = () => {
+  const { page } = useParams();
+  const navigate = useNavigate();
   const [transfers, setTransfers] = useState([]);
-  const [pageKey, setPageKey] = useState(1);
+  const [pageKey, setPageKey] = useState(null);
   const [pagination, setPagination] = useState({});
   const headersTable = [
     "Extrinsic",
@@ -20,16 +23,22 @@ const Blocks = () => {
   ];
 
   useEffect(() => {
-    const getTransfers = async () => {
-      const postData = {
-        query: `query{getTransfers(pageKey: "${pageKey}", pageSize: 12) {pageInfo{pageSize, pageNext, pagePrev}, objects{blockNumber, eventIdx, extrinsicIdx, value, blockDatetime, complete, fromMultiAddressType, fromMultiAddressAccountId, toMultiAddressType, toMultiAddressAccountId}}}`,
-      };
+    setPageKey(page);
+  }, [page, pageKey]);
 
-      const response = await axiosInstance.post("", postData);
-      setTransfers(response.data.data.getTransfers.objects);
-      setPagination(response.data.data.getTransfers.pageInfo);
-    };
-    getTransfers();
+  useEffect(() => {
+    if (pageKey) {
+      const getTransfers = async () => {
+        const postData = {
+          query: `query{getTransfers(pageKey: "${pageKey}", pageSize: 12) {pageInfo{pageSize, pageNext, pagePrev}, objects{blockNumber, eventIdx, extrinsicIdx, value, blockDatetime, complete, fromMultiAddressType, fromMultiAddressAccountId, toMultiAddressType, toMultiAddressAccountId}}}`,
+        };
+
+        const response = await axiosInstance.post("", postData);
+        setTransfers(response.data.data.getTransfers.objects);
+        setPagination(response.data.data.getTransfers.pageInfo);
+      };
+      getTransfers();
+    }
   }, [pageKey]);
 
   const prepareTableArray = (arr) => {
@@ -66,6 +75,10 @@ const Blocks = () => {
     return array;
   };
 
+  const updatePage = (page) => {
+    navigate("/transfers/" + page.toString());
+  };
+
   return (
     <div className="page-content">
       <div className="main-inner">
@@ -80,7 +93,7 @@ const Blocks = () => {
           <Pagination
             pagePrev={pagination.pagePrev}
             pageNext={pagination.pageNext}
-            setPageKey={setPageKey}
+            setPageKey={updatePage}
           />
         </div>
       </div>

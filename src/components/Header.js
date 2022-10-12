@@ -13,28 +13,28 @@ const Header = () => {
         </Link>
         <div className="header-items">
           <Link
-            to="/blocks"
+            to="/blocks/1"
             className={classNames({
               "header-item": true,
-              active: location === "blocks",
+              active: location.indexOf("blocks") > -1,
             })}
           >
             Blocks
           </Link>
           <Link
-            to="/transfers"
+            to="/transfers/1"
             className={classNames({
               "header-item": true,
-              active: location === "transfers",
+              active: location.indexOf("transfers") > -1,
             })}
           >
             Transfers
           </Link>
           <Link
-            to="/events"
+            to="/events/1"
             className={classNames({
               "header-item": true,
-              active: location === "events",
+              active: location.indexOf("events") > -1,
             })}
           >
             Events
