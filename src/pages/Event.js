@@ -107,7 +107,10 @@ const Event = () => {
               />
               <ListInfo
                 title={"Value"}
-                info={parseInt(parsedAttributes[1]) / 1000000000000 + " P3D"}
+                info={
+                  (parseInt(parsedAttributes[1]) / 1000000000000).toFixed(4) +
+                  " P3D"
+                }
                 canCopy={false}
               />
             </>
