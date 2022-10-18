@@ -31,7 +31,7 @@ body {
   display: inline-block;
 
   width: 100%;
-  min-height: calc(100vh - 310px);
+  min-height: calc(100vh - 345px);
 
   padding: 50px 10px;
 
@@ -691,7 +691,7 @@ a {
   border-radius: 5px;
 }
 
-input:focus {
+.main-input:focus {
   border: 1px solid #3fb0ac;
 }
 
@@ -718,7 +718,8 @@ input[type="number"] {
 
   width: 100%;
 
-  margin-bottom: 40px;
+  margin-top: -15px;
+  margin-bottom: 20px;
 
   text-align: center;
 }
@@ -856,6 +857,30 @@ input::placeholder {
 
 .email-icon {
   background-image: url("../public/images/email.svg");
+}
+
+.main-select {
+  position: relative;
+  display: inline-block;
+
+  padding: 16px 40px;
+
+  font-size: 18px;
+  color: #303030;
+  font-weight: 400;
+
+  background-color: #fff;
+  background-image: url("../public/images/down.svg");
+  background-repeat: no-repeat;
+  background-size: 35px;
+  background-position: 100% 9px;
+
+  vertical-align: middle;
+  border: none;
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 @media (max-width: 900px) {

@@ -2,68 +2,39 @@ import React, { useEffect, useState } from "react";
 
 import BlockPreview from "../components/BlockPreview";
 import { Link } from "react-router-dom";
-import MainSearch from "../components/MainSearch";
 import TransferPreview from "../components/TransferPreview";
 import axiosInstance from "../api/axios";
 
 const Home = () => {
   const [blocks, setBlocks] = useState([]);
   const [transfers, setTransfers] = useState([]);
-  const [search, setSearch] = useState("");
 
   useEffect(() => {
     getBlocks();
     getTransfers();
   }, []);
 
-  const getBlocks = async (search) => {
-    let filters = ``;
-    if (search) {
-      filters = `filters: {number: ${parseInt(search)}}`;
-    }
-
+  const getBlocks = async () => {
     const postData = {
-      query: `{getBlocks(pageKey: "1", pageSize: 10, ${filters}){pageInfo{pageSize, pageNext, pagePrev}, objects{number, parentNumber, parentHash, stateRoot, hash, datetime, totalWeight, countExtrinsics, countEvents, countLogs, specName}}}`,
+      query: `{getBlocks(pageKey: "1", pageSize: 10){pageInfo{pageSize, pageNext, pagePrev}, objects{number, parentNumber, parentHash, stateRoot, hash, datetime, totalWeight, countExtrinsics, countEvents, countLogs, specName}}}`,
     };
 
     const response = await axiosInstance.post("", postData);
     setBlocks(response.data.data.getBlocks.objects);
   };
 
-  const getTransfers = async (search) => {
-    let filters = ``;
-    if (search) {
-      filters = `filters: {blockNumber: ${parseInt(search)}}`;
-    }
-
+  const getTransfers = async () => {
     const postData = {
-      query: `{getTransfers(pageKey: "1", pageSize: 10, ${filters}) {pageInfo{pageSize, pageNext, pagePrev}, objects{blockNumber, eventIdx, extrinsicIdx, value, blockDatetime, complete, fromMultiAddressType, fromMultiAddressAccountId, toMultiAddressType, toMultiAddressAccountId}}}`,
+      query: `{getTransfers(pageKey: "1", pageSize: 10) {pageInfo{pageSize, pageNext, pagePrev}, objects{blockNumber, eventIdx, extrinsicIdx, value, blockDatetime, complete, fromMultiAddressType, fromMultiAddressAccountId, toMultiAddressType, toMultiAddressAccountId}}}`,
     };
 
     const response = await axiosInstance.post("", postData);
     setTransfers(response.data.data.getTransfers.objects);
   };
 
-  const triggerSearch = () => {
-    if (search !== "") {
-      getBlocks(Number(search));
-      getTransfers(Number(search));
-    } else {
-      getBlocks();
-      getTransfers();
-    }
-  };
-
   return (
     <div className="page-content">
       <div className="main-inner">
-        <MainSearch
-          placeholder={"Search Blocks and Transfers by Block Number..."}
-          type={"number"}
-          value={search}
-          onChange={setSearch}
-          triggerSearch={triggerSearch}
-        />
         <div className="list-container home-list-container">
           <div className="list-header">
             <div className="list-header-content">

@@ -66,8 +66,9 @@ const Transfer = () => {
       };
       const response = await axiosInstance.post("", postData);
 
-      if (response.data.data.getExtrinsic) {
+      if (response.data.data && response.data.data.getExtrinsic) {
         setExtrinsic(response.data.data.getExtrinsic);
+        setErrorData(false);
 
         let transferValue = 0;
         let parsedArguments = JSON.parse(

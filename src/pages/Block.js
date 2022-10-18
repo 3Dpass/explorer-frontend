@@ -48,7 +48,8 @@ const Block = () => {
       };
 
       const response = await axiosInstance.post("", postData);
-      if (response.data.data.getBlock) {
+      if (response.data.data && response.data.data.getBlock) {
+        setErrorData(false);
         setBlock(response.data.data.getBlock);
 
         const wsProvider = new WsProvider("wss://rpc2.3dpass.org");

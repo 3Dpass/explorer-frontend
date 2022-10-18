@@ -2,6 +2,7 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import { Cell, Pie, PieChart } from "recharts";
 import React, { useEffect, useState } from "react";
 
+import ErrorData from "../components/ErrorData";
 import { Keyring } from "@polkadot/keyring";
 import ListInfo from "../components/ListInfo";
 import Pagination from "../components/Pagination";
@@ -29,6 +30,7 @@ const Account = () => {
   const [paginationFrom, setPaginationFrom] = useState({});
   const [transfersFrom, setTransferFrom] = useState([]);
   const [miner, setMiner] = useState("");
+  const [errorData, setErrorData] = useState(false);
 
   useEffect(() => {
     const getAccountInfo = async (acc) => {
@@ -36,6 +38,7 @@ const Account = () => {
       const wsProvider = new WsProvider("wss://rpc2.3dpass.org");
       const api = await ApiPromise.create({ provider: wsProvider });
       const pero = await api.query.system.account(acc);
+      console.log("pero---", pero);
       const free =
         Number(pero.data.toHuman().free.replaceAll(",", "")) / 1000000000000;
       const miscFrozen =
@@ -59,11 +62,10 @@ const Account = () => {
 
       setAccountInfo(objectAccount);
       setLoading(false);
+      const keyring = new Keyring();
+      const minerEncoded = keyring.encodeAddress(account, 71);
+      setMiner(minerEncoded);
     };
-
-    const keyring = new Keyring();
-    const minerEncoded = keyring.encodeAddress(account, 71);
-    setMiner(minerEncoded);
 
     getAccountInfo(account);
   }, [account]);
@@ -87,8 +89,13 @@ const Account = () => {
 
     const responseExtrincts = await axiosInstance.post("", getTransfers);
 
-    setExtrincts(responseExtrincts.data.data.getExtrinsics.objects);
-    setPaginationE(responseExtrincts.data.data.getExtrinsics.pageInfo);
+    if (responseExtrincts.data && responseExtrincts.data.data.getExtrinsics) {
+      setExtrincts(responseExtrincts.data.data.getExtrinsics.objects);
+      setPaginationE(responseExtrincts.data.data.getExtrinsics.pageInfo);
+      setErrorData(false);
+    } else {
+      setErrorData(true);
+    }
   };
 
   const getTransfersTo = async (acc, pageKey) => {
@@ -98,8 +105,10 @@ const Account = () => {
 
     const responseTransfers = await axiosInstance.post("", postTransfers);
 
-    setTransfersTo(responseTransfers.data.data.getTransfers.objects);
-    setPaginationTo(responseTransfers.data.data.getTransfers.pageInfo);
+    if (responseTransfers.data && responseTransfers.data.data.getTransfers) {
+      setTransfersTo(responseTransfers.data.data.getTransfers.objects);
+      setPaginationTo(responseTransfers.data.data.getTransfers.pageInfo);
+    }
   };
 
   const getTransfersFrom = async (acc, pageKey) => {
@@ -108,8 +117,11 @@ const Account = () => {
     };
 
     const responseTransfers = await axiosInstance.post("", postTransfers);
-    setTransferFrom(responseTransfers.data.data.getTransfers.objects);
-    setPaginationFrom(responseTransfers.data.data.getTransfers.pageInfo);
+
+    if (responseTransfers.data && responseTransfers.data.data.getTransfers) {
+      setTransferFrom(responseTransfers.data.data.getTransfers);
+      setPaginationFrom(responseTransfers.data.data.getTransfers.pageInfo);
+    }
   };
 
   const prepareTableArray = (arr, type) => {
@@ -165,149 +177,156 @@ const Account = () => {
   return (
     <div className="page-content">
       <div className="main-inner">
-        <div className="list-container home-list-container">
-          <div className="list-header">
-            <div className="list-header-content">
-              <div className="list-icon account-icon"></div>
-              <div className="list-title">Account</div>
-            </div>
-          </div>
-          <ListInfo title={"Account Id"} info={account} canCopy={true} />
-          <ListInfo title={"Address"} info={miner} canCopy={true} />
-          <div className="qr-code-holder">
-            <QRCode
-              size={120}
-              value={window.location.href}
-              viewBox={`0 0 120 120`}
-            />
-          </div>
-        </div>
-        <div className="list-container home-list-container">
-          <div className="list-header">
-            <div className="list-header-content">
-              <div className="list-icon graph-icon"></div>
-              <div className="list-title">Balance</div>
-            </div>
-          </div>
-          {!loading && (
-            <>
-              <div className="graph-holder-account">
-                <PieChart width={200} height={200}>
-                  <Pie
-                    data={data}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {data.map((item, index) => (
-                      <Cell key={`cell-${index}`} fill={item.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </div>
-              <div className="graph-info-account">
-                {data.map((item, i) => (
-                  <div className="one-graph-info" key={i}>
-                    <div
-                      className="graph-color"
-                      style={{ backgroundColor: item.color }}
-                    ></div>
-                    <div className="graph-label">
-                      {item.name}{" "}
-                      <span className="block-span">{item.value} P3D</span>
-                    </div>
-                  </div>
-                ))}
-                <div className="one-graph-info">
-                  Total Balance {accoutInfo.free} P3D
+        {!errorData && (
+          <>
+            <div className="list-container home-list-container">
+              <div className="list-header">
+                <div className="list-header-content">
+                  <div className="list-icon account-icon"></div>
+                  <div className="list-title">Account</div>
                 </div>
               </div>
-            </>
-          )}
-          {loading && <div className="loading-info">Loading data...</div>}
-        </div>
-        <div className="list-container blocks-list-container account-table-container">
-          <div className="main-menu">
-            <div
-              className={classNames({
-                "menu-item": true,
-                active: activeMenu === "Extrinsics",
-              })}
-              onClick={() => setActiveMenu("Extrinsics")}
-            >
-              Extrinsics
+              <ListInfo title={"Account Id"} info={account} canCopy={true} />
+              <ListInfo title={"Address"} info={miner} canCopy={true} />
+              <div className="qr-code-holder">
+                <QRCode
+                  size={120}
+                  value={window.location.href}
+                  viewBox={`0 0 120 120`}
+                />
+              </div>
             </div>
-            <div
-              className={classNames({
-                "menu-item": true,
-                active: activeMenu === "Transfers To",
-              })}
-              onClick={() => setActiveMenu("Transfers To")}
-            >
-              Transfers to Account
+            <div className="list-container home-list-container">
+              <div className="list-header">
+                <div className="list-header-content">
+                  <div className="list-icon graph-icon"></div>
+                  <div className="list-title">Balance</div>
+                </div>
+              </div>
+              {!loading && (
+                <>
+                  <div className="graph-holder-account">
+                    <PieChart width={200} height={200}>
+                      <Pie
+                        data={data}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {data.map((item, index) => (
+                          <Cell key={`cell-${index}`} fill={item.color} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </div>
+                  <div className="graph-info-account">
+                    {data.map((item, i) => (
+                      <div className="one-graph-info" key={i}>
+                        <div
+                          className="graph-color"
+                          style={{ backgroundColor: item.color }}
+                        ></div>
+                        <div className="graph-label">
+                          {item.name}{" "}
+                          <span className="block-span">{item.value} P3D</span>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="one-graph-info">
+                      Total Balance {accoutInfo.free} P3D
+                    </div>
+                  </div>
+                </>
+              )}
+              {loading && <div className="loading-info">Loading data...</div>}
             </div>
-            <div
-              className={classNames({
-                "menu-item": true,
-                active: activeMenu === "Transfers From",
-              })}
-              onClick={() => setActiveMenu("Transfers From")}
-            >
-              Transfers from Account
+            <div className="list-container blocks-list-container account-table-container">
+              <div className="main-menu">
+                <div
+                  className={classNames({
+                    "menu-item": true,
+                    active: activeMenu === "Extrinsics",
+                  })}
+                  onClick={() => setActiveMenu("Extrinsics")}
+                >
+                  Extrinsics
+                </div>
+                <div
+                  className={classNames({
+                    "menu-item": true,
+                    active: activeMenu === "Transfers To",
+                  })}
+                  onClick={() => setActiveMenu("Transfers To")}
+                >
+                  Transfers to Account
+                </div>
+                <div
+                  className={classNames({
+                    "menu-item": true,
+                    active: activeMenu === "Transfers From",
+                  })}
+                  onClick={() => setActiveMenu("Transfers From")}
+                >
+                  Transfers from Account
+                </div>
+              </div>
+              {activeMenu === "Extrinsics" && (
+                <>
+                  <Table
+                    header={extrinctsHeaders}
+                    array={prepareTableArray(extrincts, "extrincts")}
+                  />
+                  {extrincts.length === 0 && (
+                    <div className="empty-state">No available data.</div>
+                  )}
+                  <Pagination
+                    pagePrev={paginationE.pagePrev}
+                    pageNext={paginationE.pageNext}
+                    setPageKey={setPageKeyE}
+                  />
+                </>
+              )}
+              {activeMenu === "Transfers To" && (
+                <>
+                  <Table
+                    header={transferToHeader}
+                    array={prepareTableArray(transfersTo, "transfersTo")}
+                  />
+                  {transfersTo.length === 0 && (
+                    <div className="empty-state">No available data.</div>
+                  )}
+                  <Pagination
+                    pagePrev={paginationTo.pagePrev}
+                    pageNext={paginationTo.pageNext}
+                    setPageKey={setPageKeyTo}
+                  />
+                </>
+              )}
+              {activeMenu === "Transfers From" && (
+                <>
+                  <Table
+                    header={transferToHeader}
+                    array={prepareTableArray(transfersFrom, "transfersFrom")}
+                  />
+                  {transfersFrom.length === 0 && (
+                    <div className="empty-state">No available data.</div>
+                  )}
+                  <Pagination
+                    pagePrev={paginationFrom.pagePrev}
+                    pageNext={paginationFrom.pageNext}
+                    setPageKey={setPageKeyFrom}
+                  />
+                </>
+              )}
             </div>
-          </div>
-          {activeMenu === "Extrinsics" && (
-            <>
-              <Table
-                header={extrinctsHeaders}
-                array={prepareTableArray(extrincts, "extrincts")}
-              />
-              {extrincts.length === 0 && (
-                <div className="empty-state">No available data.</div>
-              )}
-              <Pagination
-                pagePrev={paginationE.pagePrev}
-                pageNext={paginationE.pageNext}
-                setPageKey={setPageKeyE}
-              />
-            </>
-          )}
-          {activeMenu === "Transfers To" && (
-            <>
-              <Table
-                header={transferToHeader}
-                array={prepareTableArray(transfersTo, "transfersTo")}
-              />
-              {transfersTo.length === 0 && (
-                <div className="empty-state">No available data.</div>
-              )}
-              <Pagination
-                pagePrev={paginationTo.pagePrev}
-                pageNext={paginationTo.pageNext}
-                setPageKey={setPageKeyTo}
-              />
-            </>
-          )}
-          {activeMenu === "Transfers From" && (
-            <>
-              <Table
-                header={transferToHeader}
-                array={prepareTableArray(transfersFrom, "transfersFrom")}
-              />
-              {transfersFrom.length === 0 && (
-                <div className="empty-state">No available data.</div>
-              )}
-              <Pagination
-                pagePrev={paginationFrom.pagePrev}
-                pageNext={paginationFrom.pageNext}
-                setPageKey={setPageKeyFrom}
-              />
-            </>
-          )}
-        </div>
+          </>
+        )}
+        {errorData && (
+          <ErrorData error={"No available data for Account " + account} />
+        )}
       </div>
     </div>
   );

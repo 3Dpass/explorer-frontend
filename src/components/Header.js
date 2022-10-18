@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import MainSearch from "./MainSearch";
 import classNames from "classnames";
 import { useLocation } from "react-router-dom";
 
@@ -40,6 +41,7 @@ const Header = () => {
             Events
           </Link>
         </div>
+        <MainSearch />
       </div>
     </header>
   );

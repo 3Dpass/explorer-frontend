@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 
+import ErrorData from "../components/ErrorData";
 import ListInfo from "../components/ListInfo";
 import axiosInstance from "../api/axios";
 import moment from "moment";
@@ -9,6 +10,7 @@ const Event = () => {
   const { number } = useParams();
   const [event, setEvent] = useState({});
   const [eventId, setEventId] = useState(0);
+  const [errorData, setErrorData] = useState(false);
 
   useEffect(() => {
     const splitParam = number.split("-");
@@ -37,7 +39,12 @@ const Event = () => {
       };
 
       const responseEvent = await axiosInstance.post("", postEvent);
-      setEvent(responseEvent.data.data.getEvent);
+      if (responseEvent.data.data && responseEvent.data.data.getEvent) {
+        setEvent(responseEvent.data.data.getEvent);
+        setErrorData(false);
+      } else {
+        setErrorData(true);
+      }
     };
 
     getEvent(splitParam[0], splitParam[1]);
@@ -60,67 +67,80 @@ const Event = () => {
   return (
     <div className="page-content">
       <div className="main-inner">
-        <div className="list-container blocks-list-container">
-          <div className="list-header">
-            <div className="list-header-content">
-              <div className="list-icon transfer-icon"></div>
-              <div className="list-title">Event#{number}</div>
+        {!errorData && (
+          <div className="list-container blocks-list-container">
+            <div className="list-header">
+              <div className="list-header-content">
+                <div className="list-icon transfer-icon"></div>
+                <div className="list-title">Event#{number}</div>
+              </div>
             </div>
+            <ListInfo
+              title={"Block Time"}
+              info={moment(blockDatetime).fromNow()}
+              canCopy={false}
+            />
+            <ListInfo title={"Block Hash"} info={blockHash} canCopy={true} />
+            <ListInfo
+              title={"Status"}
+              info={complete ? "Success" : "Not Success"}
+              canCopy={false}
+            />
+            {eventId === 0 && (
+              <>
+                <ListInfo
+                  title={"Class"}
+                  info={parsedAttributes.class}
+                  canCopy={false}
+                />
+                <ListInfo
+                  title={"Weight"}
+                  info={parsedAttributes.weight}
+                  canCopy={false}
+                />
+                <ListInfo
+                  title={"Pays Fee"}
+                  info={parsedAttributes.pays_fee}
+                  canCopy={false}
+                />
+              </>
+            )}
+            {eventId > 0 && (
+              <>
+                <ListInfo
+                  title={"Author Id"}
+                  info={parsedAttributes[0]}
+                  canCopy={true}
+                  url={"/account/" + parsedAttributes[0]}
+                />
+                <ListInfo
+                  title={"Value"}
+                  info={
+                    (parseInt(parsedAttributes[1]) / 1000000000000).toFixed(4) +
+                    " P3D"
+                  }
+                  canCopy={false}
+                />
+              </>
+            )}
+            <ListInfo
+              title={"Event Module"}
+              info={eventModule}
+              canCopy={false}
+            />
+            <ListInfo title={"Event Name"} info={eventName} canCopy={false} />
+            <ListInfo title={"Phase Name"} info={phaseName} canCopy={false} />
+            <ListInfo title={"Spec Name"} info={specName} canCopy={false} />
+            <ListInfo
+              title={"Spec Version"}
+              info={specVersion}
+              canCopy={false}
+            />
           </div>
-          <ListInfo
-            title={"Block Time"}
-            info={moment(blockDatetime).fromNow()}
-            canCopy={false}
-          />
-          <ListInfo title={"Block Hash"} info={blockHash} canCopy={true} />
-          <ListInfo
-            title={"Status"}
-            info={complete ? "Success" : "Not Success"}
-            canCopy={false}
-          />
-          {eventId === 0 && (
-            <>
-              <ListInfo
-                title={"Class"}
-                info={parsedAttributes.class}
-                canCopy={false}
-              />
-              <ListInfo
-                title={"Weight"}
-                info={parsedAttributes.weight}
-                canCopy={false}
-              />
-              <ListInfo
-                title={"Pays Fee"}
-                info={parsedAttributes.pays_fee}
-                canCopy={false}
-              />
-            </>
-          )}
-          {eventId > 0 && (
-            <>
-              <ListInfo
-                title={"Author Id"}
-                info={parsedAttributes[0]}
-                canCopy={true}
-                url={"/account/" + parsedAttributes[0]}
-              />
-              <ListInfo
-                title={"Value"}
-                info={
-                  (parseInt(parsedAttributes[1]) / 1000000000000).toFixed(4) +
-                  " P3D"
-                }
-                canCopy={false}
-              />
-            </>
-          )}
-          <ListInfo title={"Event Module"} info={eventModule} canCopy={false} />
-          <ListInfo title={"Event Name"} info={eventName} canCopy={false} />
-          <ListInfo title={"Phase Name"} info={phaseName} canCopy={false} />
-          <ListInfo title={"Spec Name"} info={specName} canCopy={false} />
-          <ListInfo title={"Spec Version"} info={specVersion} canCopy={false} />
-        </div>
+        )}
+        {errorData && (
+          <ErrorData error={"No available data for Event " + number} />
+        )}
       </div>
     </div>
   );
