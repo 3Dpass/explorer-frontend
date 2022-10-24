@@ -883,6 +883,84 @@ input::placeholder {
   appearance: none;
 }
 
+.home-info-container {
+  width: calc(100% - 20px);
+
+  margin-bottom: 20px;
+}
+
+.home-info {
+  display: inline-block;
+
+  width: calc(33% - 10px);
+
+  margin: 5px;
+  padding: 5px;
+
+  text-align: left;
+
+  border: 1px solid #f0f0f0;
+  border-radius: 5px;
+
+  vertical-align: middle;
+}
+
+.home-info-icon {
+  display: inline-block;
+
+  width: 30px;
+  height: 30px;
+
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  vertical-align: middle;
+}
+
+.home-info-content {
+  display: inline-block;
+
+  width: calc(100% - 30px);
+
+  padding-left: 10px;
+
+  text-align: left;
+
+  vertical-align: middle;
+}
+
+.home-info-title {
+  width: 100%;
+
+  text-align: left;
+  font-size: 14px;
+  color: #999696;
+}
+
+.home-info-value {
+  text-align: left;
+  font-size: 14px;
+  color: #303030;
+  font-weight: 700;
+}
+
+.note-icon {
+  background-image: url("../public/images/note.svg");
+}
+
+.user-icon {
+  background-image: url("../public/images/user.svg");
+}
+
+.graph-home-icon {
+  background-image: url("../public/images/graph-home.svg");
+}
+
+.coin-icon {
+  background-image: url("../public/images/coin.svg");
+}
+
 @media (max-width: 900px) {
   .home-list-container {
     width: calc(100% - 20px);

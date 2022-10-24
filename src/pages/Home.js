@@ -1,3 +1,4 @@
+import { ApiPromise, WsProvider } from "@polkadot/api";
 import React, { useEffect, useState } from "react";
 
 import BlockPreview from "../components/BlockPreview";
@@ -8,10 +9,13 @@ import axiosInstance from "../api/axios";
 const Home = () => {
   const [blocks, setBlocks] = useState([]);
   const [transfers, setTransfers] = useState([]);
+  const [latestBlock, setLatestBlock] = useState(0);
+  const [totalInsurance, setTotalInsurance] = useState("-");
 
   useEffect(() => {
     getBlocks();
     getTransfers();
+    getInfo();
   }, []);
 
   const getBlocks = async () => {
@@ -21,6 +25,7 @@ const Home = () => {
 
     const response = await axiosInstance.post("", postData);
     setBlocks(response.data.data.getBlocks.objects);
+    setLatestBlock(response.data.data.getBlocks.objects[0].number);
   };
 
   const getTransfers = async () => {
@@ -32,9 +37,65 @@ const Home = () => {
     setTransfers(response.data.data.getTransfers.objects);
   };
 
+  const getInfo = async () => {
+    const wsProvider = new WsProvider("wss://rpc2.3dpass.org");
+    const api = await ApiPromise.create({ provider: wsProvider });
+    const lol = await api.query.balances.totalIssuance();
+    const lolNumber = lol.toHuman().replaceAll(",", "");
+
+    const dividedLol = Number(lolNumber) / 1000000000000;
+    const totalInsuranceVal = dividedLol / 1000000;
+
+    setTotalInsurance(totalInsuranceVal.toFixed(4));
+  };
+
   return (
     <div className="page-content">
       <div className="main-inner">
+        <div className="list-container home-info-container">
+          <div className="home-info">
+            <div className="home-info-icon cube-icon"></div>
+            <div className="home-info-content">
+              <div className="home-info-title">Latest Block</div>
+              <div className="home-info-value">{latestBlock}</div>
+            </div>
+          </div>
+          <div className="home-info">
+            <div className="home-info-icon note-icon"></div>
+            <div className="home-info-content">
+              <div className="home-info-title">Signed Extrinsic</div>
+              <div className="home-info-value">-</div>
+            </div>
+          </div>
+          <div className="home-info">
+            <div className="home-info-icon transfer-icon"></div>
+            <div className="home-info-content">
+              <div className="home-info-title">Transfers</div>
+              <div className="home-info-value">-</div>
+            </div>
+          </div>
+          <div className="home-info">
+            <div className="home-info-icon user-icon"></div>
+            <div className="home-info-content">
+              <div className="home-info-title">Holders</div>
+              <div className="home-info-value">-</div>
+            </div>
+          </div>
+          <div className="home-info">
+            <div className="home-info-icon graph-home-icon"></div>
+            <div className="home-info-content">
+              <div className="home-info-title">Total Insurance</div>
+              <div className="home-info-value">{totalInsurance} MP3DT</div>
+            </div>
+          </div>
+          <div className="home-info">
+            <div className="home-info-icon coin-icon"></div>
+            <div className="home-info-content">
+              <div className="home-info-title">Inflation Rate</div>
+              <div className="home-info-value">-</div>
+            </div>
+          </div>
+        </div>
         <div className="list-container home-list-container">
           <div className="list-header">
             <div className="list-header-content">

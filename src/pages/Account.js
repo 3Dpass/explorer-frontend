@@ -38,7 +38,6 @@ const Account = () => {
       const wsProvider = new WsProvider("wss://rpc2.3dpass.org");
       const api = await ApiPromise.create({ provider: wsProvider });
       const pero = await api.query.system.account(acc);
-      console.log("pero---", pero);
       const free =
         Number(pero.data.toHuman().free.replaceAll(",", "")) / 1000000000000;
       const miscFrozen =
@@ -182,7 +181,7 @@ const Account = () => {
             <div className="list-container home-list-container">
               <div className="list-header">
                 <div className="list-header-content">
-                  <div className="list-icon account-icon"></div>
+                  <div className="list-icon user-icon"></div>
                   <div className="list-title">Account</div>
                 </div>
               </div>
