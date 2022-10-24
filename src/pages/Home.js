@@ -91,8 +91,8 @@ const Home = () => {
           <div className="home-info">
             <div className="home-info-icon coin-icon"></div>
             <div className="home-info-content">
-              <div className="home-info-title">Inflation Rate</div>
-              <div className="home-info-value">-</div>
+              <div className="home-info-title">Current Price</div>
+              <div className="home-info-value">0.00495 $</div>
             </div>
           </div>
         </div>
