@@ -1,4 +1,17 @@
-# Getting Started with Create React App
+# 3DPass Block Explorer - frontend
+[3DPass Block Explorer](https://explorer.3dpass.org/) represents a hight performance Web3 blockchain explorer client for [The Ledger of Things](https://github.com/3dpass), which  might be used either for [3DPass](https://3dpass.org) or any blockchain network based on [Substrate](https://substrate.io/). In order to fetch the blockchain data the app connects to [3DPscan Explorer API](https://github.com/3Dpass/explorer-api) backend server directly from user's web browser. 
+
+Block Explorer web page: [https://explorer.3dpass.org/](https://explorer.3dpass.org/)
+
+Features: 
+- Blocks, Extrinsics, Events in detail
+- Network summary dashboard
+- Search bar
+
+<img width="1099" alt="block_explorer_screenshot" src="https://user-images.githubusercontent.com/107915078/200135820-c1efb987-ee33-4e96-b329-6f8f15e6cffe.png">
+
+## Getting Started with Create React App
+
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
