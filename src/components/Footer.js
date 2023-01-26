@@ -22,7 +22,7 @@ const Footer = () => {
           </a>
           <a
             className="one-footer-info"
-            href="https://3dpass.org/3dp_token.html"
+            href="https://3dpass.org/3dpass_coin.html"
             target="_blank"
             rel="noreferrer"
           >
@@ -68,7 +68,7 @@ const Footer = () => {
             {" "}
           </a>
           <a
-            href="https://github.com/3dpass"
+            href="https://github.com/3Dpass/explorer-frontend"
             target="_blank"
             rel="noreferrer"
             className="social-icon github-icon"
