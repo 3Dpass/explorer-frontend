@@ -1,24 +1,143 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import React, { useEffect, useState } from "react";
+import { Keyring } from "@polkadot/keyring";
+import { u8aToHex } from "@polkadot/util";
 
 import BlockPreview from "../components/BlockPreview";
 import { Link } from "react-router-dom";
 import TransferPreview from "../components/TransferPreview";
 import axiosInstance from "../api/axios";
 
-const Home = () => {
+fetch('https://prod-api.3dpass.org:4000/validators')
+  .then(response => response.json())
+  .then(data => {
+    const totalvalidators = data.totalOnlineValidators;
+    if (totalvalidators) {
+      document.getElementById("onlinevalidator").textContent = totalvalidators;
+    } else {
+      document.getElementById("onlinevalidator").textContent = 'Loading...';
+    }
+  })
+  .catch(error => console.error(error));
+
+
+fetch('https://prod-api.3dpass.org:4000/transfercount')
+  .then(response => response.json())
+  .then(data => {
+    const totalTransfers = data.totalTransfers;
+    if (totalTransfers) {
+      document.getElementById("totaltransfer").textContent = totalTransfers;
+    } else {
+      document.getElementById("totaltransfer").textContent = 'Loading...';
+    }
+  })
+  .catch(error => console.error(error));
+
+fetch('https://prod-api.3dpass.org:4000/signedExtrinsicCount')
+  .then(response => response.json())
+  .then(data => {
+    const totalSignedExtrinsics = data.totalSignedExtrinsics;
+    if (totalSignedExtrinsics) {
+      document.getElementById("totalsignedex").textContent = totalSignedExtrinsics;
+    } else {
+      document.getElementById("totalsignedex").textContent = 'Loading...';
+    }
+  })
+  .catch(error => console.error(error));
+
+fetch('https://prod-api.3dpass.org:4000/topholdercnt')
+  .then(response => response.json())
+  .then(data => {
+    const count = data.count;
+    if (count) {
+      document.getElementById("tholdcnt").textContent = count;
+    } else {
+      document.getElementById("tholdcnt").textContent = 'Loading...';
+    }
+  })
+  .catch(error => console.error(error));
+
+
+fetch('https://explorer.3dpass.org/response.json')
+  .then(response => response.json())
+  .then(data => {
+    const lastPrice = data.last_price;
+    if (lastPrice) {
+      const formattedPrice = lastPrice + ' $';
+      document.getElementById("price").textContent = formattedPrice;
+    } else {
+      document.getElementById("price").textContent = '--$';
+    }
+  })
+  .catch(error => console.error(error));
+
+
+
+fetch('https://wallet.3dpass.org/network')
+  .then(response => response.json())
+  .then(data => {
+    const circulatingSupply = data.circulatingSupply / 1e12;
+    const totalSupply = data.totalSupply / 1e12;
+
+    const circulatingSupplyElem = document.querySelector('#circulatingSupply');
+    const totalSupplyElem = document.querySelector('#totalSupply');
+	let supplyValue = totalSupply;
+	let extensiont = "P3D";
+
+	if (supplyValue >= 1000) {
+	  supplyValue /= 1000;
+	  extensiont = "KP3D";
+	}
+
+	if (supplyValue >= 1000) {
+	  supplyValue /= 1000;
+	  extensiont = "MP3D";
+	}
+
+	if (supplyValue >= 1000) {
+	  supplyValue /= 1000;
+	  extensiont = "BP3D";
+	}
+
+	totalSupplyElem.innerHTML = `${supplyValue.toFixed(4)} ${extensiont}`;
+	let circValue = circulatingSupply;
+	let extension = "P3D";
+
+	if (circValue >= 1000) {
+	  circValue /= 1000;
+	  extension = "KP3D";
+	}
+	
+	if (circValue >= 1000) {
+	  circValue /= 1000;
+	  extension = "MP3D";
+	}
+	
+	if (circValue >= 1000) {
+	  circValue /= 1000;
+	  extension = "BP3D";
+	}
+
+	circulatingSupplyElem.innerHTML = `${circValue.toFixed(3)} ${extension}`;
+  })
+  .catch(error => console.log(error));
+
+  const Home = () => {
   const [blocks, setBlocks] = useState([]);
   const [transfers, setTransfers] = useState([]);
   const [latestBlock, setLatestBlock] = useState(0);
   const [totalInsurance, setTotalInsurance] = useState("-");
-
+  
+  
   useEffect(() => {
     getBlocks();
     getTransfers();
     getInfo();
   }, []);
 
-  const getBlocks = async () => {
+  
+
+const getBlocks = async () => {
     const postData = {
       query: `{getBlocks(pageKey: "1", pageSize: 10){pageInfo{pageSize, pageNext, pagePrev}, objects{number, parentNumber, parentHash, stateRoot, hash, datetime, totalWeight, countExtrinsics, countEvents, countLogs, specName}}}`,
     };
@@ -64,35 +183,56 @@ const Home = () => {
             <div className="home-info-icon note-icon"></div>
             <div className="home-info-content">
               <div className="home-info-title">Signed Extrinsic</div>
-              <div className="home-info-value">-</div>
+              <div id="totalsignedex" className="home-info-value"></div>
             </div>
           </div>
           <div className="home-info">
             <div className="home-info-icon transfer-icon"></div>
             <div className="home-info-content">
               <div className="home-info-title">Transfers</div>
-              <div className="home-info-value">-</div>
+              <div id="totaltransfer" className="home-info-value"></div>
             </div>
           </div>
           <div className="home-info">
             <div className="home-info-icon user-icon"></div>
             <div className="home-info-content">
               <div className="home-info-title">Holders</div>
-              <div className="home-info-value">-</div>
+              <div id="tholdcnt" className="home-info-value"></div>
             </div>
           </div>
           <div className="home-info">
             <div className="home-info-icon graph-home-icon"></div>
             <div className="home-info-content">
-              <div className="home-info-title">Total Insurance</div>
-              <div className="home-info-value">{totalInsurance} MP3DT</div>
+              <div className="home-info-title">Total Inssuance</div>
+              <div className="home-info-value">{totalInsurance} MP3D</div>
+            </div>
+          </div>
+	   <div className="home-info">
+            <div className="home-info-icon graph-home-icon"></div>
+            <div className="home-info-content">
+              <div className="home-info-title">circulatingSupply</div>
+              <div id="circulatingSupply" className="home-info-value">-- MP3D</div>
+            </div>
+	    </div>
+	  <div className="home-info">
+            <div className="home-info-icon graph-home-icon"></div>
+            <div className="home-info-content">
+              <div className="home-info-title">Online validators</div>
+              <div id="onlinevalidator" className="home-info-value"></div>
+            </div>
+          </div>
+	  <div className="home-info">
+            <div className="home-info-icon graph-home-icon"></div>
+            <div className="home-info-content">
+              <div className="home-info-title">totalSupply</div>
+              <div id="totalSupply" className="home-info-value">MP3D</div>
             </div>
           </div>
           <div className="home-info">
             <div className="home-info-icon coin-icon"></div>
             <div className="home-info-content">
               <div className="home-info-title">Current Price</div>
-              <div className="home-info-value">0.00495 $</div>
+              <div id="price" className="home-info-value"></div>
             </div>
           </div>
         </div>
@@ -120,13 +260,13 @@ const Home = () => {
               <div className="main-btn">View All</div>
             </Link>
           </div>
-          {transfers.map((item, i) => (
+	   {transfers.map((item, i) => (
             <TransferPreview transfer={item} key={i} />
           ))}
         </div>
       </div>
     </div>
   );
-};
 
+};
 export default Home;

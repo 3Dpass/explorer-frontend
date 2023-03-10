@@ -3,7 +3,6 @@ import { Cell, Pie, PieChart } from "recharts";
 import React, { useEffect, useState } from "react";
 
 import ErrorData from "../components/ErrorData";
-import { Keyring } from "@polkadot/keyring";
 import ListInfo from "../components/ListInfo";
 import Pagination from "../components/Pagination";
 import QRCode from "react-qr-code";
@@ -13,7 +12,7 @@ import classNames from "classnames";
 import moment from "moment";
 import { useParams } from "react-router-dom";
 
-const Account = () => {
+  const Account = () => {
   const { account } = useParams();
   const [accoutInfo, setAccountInfo] = useState({});
   const [activeMenu, setActiveMenu] = useState("Extrinsics");
@@ -30,10 +29,13 @@ const Account = () => {
   const [paginationFrom, setPaginationFrom] = useState({});
   const [transfersFrom, setTransferFrom] = useState([]);
   const [miner, setMiner] = useState("");
+  const [miner_raw, setMiner_raw] = useState("");
   const [errorData, setErrorData] = useState(false);
-
+  const { u8aToHex } = require('@polkadot/util');
+  const { Keyring } = require('@polkadot/keyring');
   useEffect(() => {
     const getAccountInfo = async (acc) => {
+      
       setLoading(true);
       const wsProvider = new WsProvider("wss://rpc2.3dpass.org");
       const api = await ApiPromise.create({ provider: wsProvider });
@@ -64,10 +66,20 @@ const Account = () => {
       const keyring = new Keyring();
       const minerEncoded = keyring.encodeAddress(account, 71);
       setMiner(minerEncoded);
+      let minerDecoded;
+      if (acc.startsWith('d1')){
+      const decodedAcc = keyring.decodeAddress(acc);
+      const publicKey = u8aToHex(decodedAcc)
+      minerDecoded = publicKey;	
+      setMiner_raw(minerDecoded);
+} else {
+	minerDecoded = acc;
+	setMiner_raw(minerDecoded);
+}
     };
 
     getAccountInfo(account);
-  }, [account]);
+  }, [account, Keyring]);
 
   useEffect(() => {
     getExtrincts(account, pageKeyE);
@@ -82,12 +94,20 @@ const Account = () => {
   }, [account, pageKeyFrom]);
 
   const getExtrincts = async (acc, pageKey) => {
-    const getTransfers = {
-      query: `query{getExtrinsics(pageKey: "${pageKey}", pageSize: 10, filters: {multiAddressAccountId: "${acc}"}){pageInfo{pageSize, pageNext, pagePrev} objects{ blockNumber, blockDatetime, extrinsicIdx, hash, complete }}}`,
+	 let address;
+    if (acc.startsWith('d1')) {
+    const keyring = new Keyring({ ss58Format: 71, type: 'sr25519'});
+    const decodedAcc = keyring.decodeAddress(acc);
+    const publicKey = u8aToHex(decodedAcc)
+    address = publicKey;
+    } else {
+    address = acc;
+    }
+     const getTransfers = {
+      query: `query{getExtrinsics(pageKey: "${pageKey}", pageSize: 10, filters: {multiAddressAccountId: "${address}"}){pageInfo{pageSize, pageNext, pagePrev} objects{ blockNumber, blockDatetime, extrinsicIdx, hash, complete }}}`,
     };
 
     const responseExtrincts = await axiosInstance.post("", getTransfers);
-
     if (responseExtrincts.data && responseExtrincts.data.data.getExtrinsics) {
       setExtrincts(responseExtrincts.data.data.getExtrinsics.objects);
       setPaginationE(responseExtrincts.data.data.getExtrinsics.pageInfo);
@@ -96,42 +116,83 @@ const Account = () => {
       setErrorData(true);
     }
   };
+    const getTransfersTo = async (acc, pageKey) => {
 
-  const getTransfersTo = async (acc, pageKey) => {
+    let address;
+    if (acc.startsWith('d1')) {
+    const keyring = new Keyring({ ss58Format: 71, type: 'sr25519'});
+    const decodedAcc = keyring.decodeAddress(acc);
+    const publicKey = u8aToHex(decodedAcc)
+    address = publicKey;
+    } else {
+    address = acc;
+    }
     const postTransfers = {
-      query: `query{getTransfers(pageKey: "${pageKey}", pageSize: 10, filters: {toMultiAddressAccountId: "${acc}"}){pageInfo{pageSize, pageNext, pagePrev} objects{ blockNumber, extrinsicIdx, eventIdx, fromMultiAddressAccountId, toMultiAddressAccountId, value }}}`,
+      query: `query{getTransfers(pageKey: "${pageKey}", pageSize: 10, filters: {toMultiAddressAccountId: "${address}"}){pageInfo{pageSize, pageNext, pagePrev} objects{ blockNumber, extrinsicIdx, eventIdx, fromMultiAddressAccountId, toMultiAddressAccountId, value }}}`,
     };
 
     const responseTransfers = await axiosInstance.post("", postTransfers);
-
     if (responseTransfers.data && responseTransfers.data.data.getTransfers) {
       setTransfersTo(responseTransfers.data.data.getTransfers.objects);
       setPaginationTo(responseTransfers.data.data.getTransfers.pageInfo);
-    }
+      setErrorData(false);
+    } else {
+      setErrorData(true);
+	}
   };
 
   const getTransfersFrom = async (acc, pageKey) => {
+    const { u8aToHex } = require('@polkadot/util');
+    const { Keyring } = require('@polkadot/keyring');
+
+    let address;
+    if (acc.startsWith('d1')) {
+    const keyring = new Keyring({ ss58Format: 71, type: 'sr25519'});
+    const decodedAcc = keyring.decodeAddress(acc);
+    const publicKey = u8aToHex(decodedAcc);
+    address = publicKey;
+    } else {
+    address = acc;
+    }
     const postTransfers = {
-      query: `query{getTransfers(pageKey: "${pageKey}", pageSize: 10, filters: {fromMultiAddressAccountId: "${acc}"}){pageInfo{pageSize, pageNext, pagePrev} objects{ blockNumber, extrinsicIdx, eventIdx, fromMultiAddressAccountId, toMultiAddressAccountId, value }}}`,
+      query: `query{getTransfers(pageKey: "${pageKey}", pageSize: 10, filters: {fromMultiAddressAccountId: "${address}"}){pageInfo{pageSize, pageNext, pagePrev} objects{ blockNumber, extrinsicIdx, eventIdx, fromMultiAddressAccountId, toMultiAddressAccountId, value }}}`,
     };
 
     const responseTransfers = await axiosInstance.post("", postTransfers);
-
     if (responseTransfers.data && responseTransfers.data.data.getTransfers) {
-      setTransferFrom(responseTransfers.data.data.getTransfers);
+      setTransferFrom(responseTransfers.data.data.getTransfers.objects);
       setPaginationFrom(responseTransfers.data.data.getTransfers.pageInfo);
-    }
+	    setErrorData(false);
+} else {
+      setErrorData(true);
+	}
   };
-
+//  const keyring = new Keyring({ ss58Format: 71, type: 'sr25519'});
   const prepareTableArray = (arr, type) => {
     if (!arr.length) {
-      return [];
+	return [];
     }
 
     let array = [];
-
     for (let i = 0; i < arr.length; i++) {
       let item = arr[i];
+	let fromEncoded;
+	let toEncoded;
+
+if (!item || (!item.fromMultiAddressAccountId && !item.toMultiAddressAccountId)) {
+    continue;
+  }
+
+  const keyring = new Keyring({ ss58Format: 71, type: 'sr25519' });
+
+  if (item.fromMultiAddressAccountId) {
+    fromEncoded = keyring.encodeAddress(item.fromMultiAddressAccountId);
+  }
+
+  if (item.toMultiAddressAccountId) {
+    toEncoded = keyring.encodeAddress(item.toMultiAddressAccountId);
+  }
+
 
       if (type === "extrincts") {
         array.push([
@@ -153,18 +214,17 @@ const Account = () => {
             url: "/extrinsic/" + item.blockNumber + "-" + item.extrinsicIdx,
           },
           {
-            val: item.fromMultiAddressAccountId,
-            url: "/account/" + item.fromMultiAddressAccountId,
+		val: fromEncoded,
+		url: "/account/" + fromEncoded,
           },
           {
-            val: item.toMultiAddressAccountId,
-            url: "/account/" + item.toMultiAddressAccountId,
+		val: toEncoded,
+		url: "/account/" + toEncoded,
           },
           { val: item.value / 1000000000000 + " P3D" },
         ]);
       }
     }
-
     return array;
   };
 
@@ -185,7 +245,7 @@ const Account = () => {
                   <div className="list-title">Account</div>
                 </div>
               </div>
-              <ListInfo title={"Account Id"} info={account} canCopy={true} />
+              <ListInfo title={"Account Id"} info={miner_raw} canCopy={true} />
               <ListInfo title={"Address"} info={miner} canCopy={true} />
               <div className="qr-code-holder">
                 <QRCode

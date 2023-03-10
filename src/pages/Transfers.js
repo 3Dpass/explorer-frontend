@@ -1,3 +1,4 @@
+import { Keyring } from '@polkadot/keyring';
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -40,7 +41,7 @@ const Blocks = () => {
       getTransfers();
     }
   }, [pageKey]);
-
+  const keyring = new Keyring();
   const prepareTableArray = (arr) => {
     if (!arr.length) {
       return [];
@@ -49,6 +50,8 @@ const Blocks = () => {
     let array = [];
     for (let i = 0; i < arr.length; i++) {
       let item = arr[i];
+      let fromEncoded = keyring.encodeAddress(item.fromMultiAddressAccountId, 71);
+      let toEncoded = keyring.encodeAddress(item.toMultiAddressAccountId, 71);
       array.push([
         {
           val: item.blockNumber + "-" + item.extrinsicIdx,
@@ -59,12 +62,12 @@ const Blocks = () => {
           url: "/block/" + item.blockNumber,
         },
         {
-          val: item.fromMultiAddressAccountId,
-          url: "/account/" + item.fromMultiAddressAccountId,
+	  val: fromEncoded,
+          url: "/account/" + fromEncoded,
         },
         {
-          val: item.toMultiAddressAccountId,
-          url: "/account/" + item.toMultiAddressAccountId,
+	  val: toEncoded,
+          url: "/account/" + toEncoded,
         },
         { val: item.value / 1000000000000 + " P3D" },
         { val: item.complete ? "Success" : "Not Success" },
