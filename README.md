@@ -10,11 +10,6 @@ Features:
 
 <img width="1099" alt="block_explorer_screenshot" src="https://user-images.githubusercontent.com/107915078/200135820-c1efb987-ee33-4e96-b329-6f8f15e6cffe.png">
 
-## Getting Started with Create React App
-
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
 ## Available Scripts
 
 In the project directory, you can run:
