@@ -33,7 +33,7 @@ fetch('https://prod-api.3dpass.org:4000/transfercount')
   })
   .catch(error => console.error(error));
 
-fetch('https://prod-api.3dpass.org:4000/signedExtrinsicCount')
+fetch('https://prod-api.3dpass.org:4000/signedextrinsiccnt')
   .then(response => response.json())
   .then(data => {
     const totalSignedExtrinsics = data.totalSignedExtrinsics;
