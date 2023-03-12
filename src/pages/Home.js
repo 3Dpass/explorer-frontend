@@ -203,7 +203,7 @@ const getBlocks = async () => {
           <div className="home-info">
             <div className="home-info-icon graph-home-icon"></div>
             <div className="home-info-content">
-              <div className="home-info-title">Total Inssuance</div>
+              <div className="home-info-title">Total Issuance</div>
               <div className="home-info-value">{totalInsurance} MP3D</div>
             </div>
           </div>
@@ -224,7 +224,7 @@ const getBlocks = async () => {
 	  <div className="home-info">
             <div className="home-info-icon graph-home-icon"></div>
             <div className="home-info-content">
-              <div className="home-info-title">totalSupply</div>
+              <div className="home-info-title">Max supply</div>
               <div id="totalSupply" className="home-info-value">MP3D</div>
             </div>
           </div>
