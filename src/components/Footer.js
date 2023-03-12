@@ -34,7 +34,7 @@ const Footer = () => {
             target="_blank"
             rel="noreferrer"
           >
-            3DPass API
+            Explorer API
           </a>
         </div>
         <div className="one-footer-section">
