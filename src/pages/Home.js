@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import React, { useEffect, useState } from "react";
-import { Keyring } from "@polkadot/keyring";
-import { u8aToHex } from "@polkadot/util";
+//import { Keyring } from "@polkadot/keyring";
+//import { u8aToHex } from "@polkadot/util";
 
 import BlockPreview from "../components/BlockPreview";
 import { Link } from "react-router-dom";

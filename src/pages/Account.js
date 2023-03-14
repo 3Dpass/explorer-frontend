@@ -33,8 +33,21 @@ import { useParams } from "react-router-dom";
   const [errorData, setErrorData] = useState(false);
   const { u8aToHex } = require('@polkadot/util');
   const { Keyring } = require('@polkadot/keyring');
+  const [judgements, setJudgements] = useState([]);
+  const [deposit, setDeposit] = useState("");
+  const [info, setInfo] = useState({});
+  const [additional, setAdditional] = useState([]);
+  const [displayRaw, setDisplayRaw] = useState("");
+  const [legal, setLegal] = useState("");
+  const [webRaw, setWebRaw] = useState("");
+  const [riot, setRiot] = useState("");
+  const [emailRaw, setEmailRaw] = useState("");
+  const [pgpFingerprint, setPgpFingerprint] = useState("");
+  const [image, setImage] = useState("");
+  const [twitterRaw, setTwitterRaw] = useState("");
   useEffect(() => {
-    const getAccountInfo = async (acc) => {
+  
+  const getAccountInfo = async (acc) => {
       
       setLoading(true);
       const wsProvider = new WsProvider("wss://rpc2.3dpass.org");
@@ -167,6 +180,57 @@ import { useParams } from "react-router-dom";
       setErrorData(true);
 	}
   };
+   useEffect(() => {
+    const fetchData = async () => {
+      const identurl = `https://prod-api.3dpass.org:4000/identity/${miner}`;
+      const response = await fetch(identurl);
+	if(!response) {
+      const data = await response.json();
+      setJudgements(data.judgements || []);
+      setDeposit(data.deposit || "");
+      setInfo(data.info || {});
+      setAdditional(data.info?.additional || []);
+      setDisplayRaw(data.info?.display?.Raw || "");
+      setLegal(data.info?.legal || "");
+      setWebRaw(data.info?.web?.Raw || "");
+      setRiot(data.info?.riot || "");
+      setEmailRaw(data.info?.email?.Raw || "");
+      setPgpFingerprint(data.info?.pgpFingerprint || "");
+      setImage(data.info?.image || "");
+      setTwitterRaw(data.info?.twitter?.Raw || "");
+	} else {
+	const data = await response.json();
+      setJudgements(data.judgements || []);
+      setDeposit(data.deposit || "");
+      setInfo(data.info || {});
+      setAdditional(data.info?.additional?.map((item) => ({
+    	name: item[0]?.Raw,
+    	value: item[1]?.Raw,
+	})) || []);
+      setDisplayRaw(data.info?.display?.Raw || "");
+      setLegal(data.info?.legal || "");
+      setWebRaw(data.info?.web?.Raw || "");
+      setRiot(data.info?.riot || "");
+      setEmailRaw(data.info?.email?.Raw || "");
+      setPgpFingerprint(data.info?.pgpFingerprint || "");
+      setImage(data.info?.image || "");
+      setTwitterRaw(data.info?.twitter?.Raw || "");
+}
+    };
+
+    if (miner.startsWith("d1")) {
+      fetchData();
+    }
+  }, [miner]);
+
+  const handleMinerChange = (event) => {
+    setMiner(event.target.value);
+  };
+
+  const handleMinerRawChange = (event) => {
+    setMiner_raw(event.target.value);
+  };
+
 //  const keyring = new Keyring({ ss58Format: 71, type: 'sr25519'});
   const prepareTableArray = (arr, type) => {
     if (!arr.length) {
@@ -247,13 +311,57 @@ if (!item || (!item.fromMultiAddressAccountId && !item.toMultiAddressAccountId))
               </div>
               <ListInfo title={"Account Id"} info={miner_raw} canCopy={true} />
               <ListInfo title={"Address"} info={miner} canCopy={true} />
-              <div className="qr-code-holder">
+  	      {judgements && judgements.length > 0 &&
+  	     
+	      <ListInfo title={"Registrar index"} info={judgements[0][0]} canCopy={false} />
+              }
+    	      {judgements && judgements.length > 0 &&
+              	<ListInfo title={"Level of confidence"} info={judgements[0][1]} canCopy={false} />
+    	      }
+    	      {deposit && 
+      		<ListInfo title={"Registrar fee"} info={(parseFloat(deposit.replaceAll(",", "")) / 1000000000000).toFixed(4)} canCopy={false} />
+    	      }
+    	 {displayRaw && (
+            <div>
+              <ListInfo title={"Name"} info={info.display.Raw} canCopy={false} />
+            </div>
+  ) }
+    {legal && legal !== "None" && (
+      <ListInfo title={"Legal"} info={legal.Raw} canCopy={false} />
+   ) }
+    {webRaw &&
+      <ListInfo title={"Web site"} info={webRaw} canCopy={false} />
+    }
+    {riot && riot !== "None" &&
+      <ListInfo title={"Riot"} info={riot} canCopy={false} />
+    }
+    {emailRaw &&
+      <ListInfo title={"Email"} info={emailRaw} canCopy={false} />
+    }
+    {pgpFingerprint &&
+      <ListInfo title={"PGP fingerprint"} info={pgpFingerprint} canCopy={false} />
+    }
+    {image && image !== "None" &&
+      <ListInfo title={"image"} info={image} canCopy={false} />
+    }
+    {twitterRaw &&
+      <ListInfo title={"Twitter"} info={twitterRaw} canCopy={false} />
+    }
+	{additional && additional.length > 0 && (
+    <div>
+        {additional.map((item, index) => (
+            <ListInfo key={index} title={item.name} info={item.value} canCopy={false} />
+        ))}
+    </div>
+)}
+          {/*    <div className="qr-code-holder">
                 <QRCode
                   size={120}
                   value={window.location.href}
                   viewBox={`0 0 120 120`}
                 />
               </div>
+	   */}
             </div>
             <div className="list-container home-list-container">
               <div className="list-header">
@@ -301,7 +409,14 @@ if (!item || (!item.fromMultiAddressAccountId && !item.toMultiAddressAccountId))
                 </>
               )}
               {loading && <div className="loading-info">Loading data...</div>}
-            </div>
+            <div className="qr-code-holder">
+                <QRCode
+                  size={120}
+                  value={window.location.href}
+                  viewBox={`0 0 120 120`}
+                />
+              </div>
+	    </div>
             <div className="list-container blocks-list-container account-table-container">
               <div className="main-menu">
                 <div

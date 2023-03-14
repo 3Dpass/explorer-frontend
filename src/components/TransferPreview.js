@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Keyring } from '@polkadot/api';
-import { u8aToHex } from '@polkadot/util';
+//import { u8aToHex } from '@polkadot/util';
 import moment from "moment";
 
 const TransferPreview = ({ transfer }) => {
