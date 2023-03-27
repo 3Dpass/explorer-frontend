@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@polkadot/api": "^9.4.2",
-    "@polkadot/keyring": "^10.1.9",
+    "@polkadot/keyring": "^10.4.2",
     "@polkadot/util": "^10.1.9",
     "@polkadot/util-crypto": "^10.1.9",
     "@testing-library/jest-dom": "^5.16.5",

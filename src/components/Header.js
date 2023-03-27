@@ -5,11 +5,16 @@ import { useLocation } from "react-router-dom";
 
 const Header = () => {
   const location = useLocation().pathname.replace("/", "");
+  
+  const handleLogoClick = () => {
+    location.reload();
+  };
+
 
   return (
     <header className="header">
       <div className="inner-header">
-        <Link to="/" className="inline-middle">
+       <Link to="" className="inline-middle" onClick={handleLogoClick}>
           <div className="header-logo"></div>
         </Link>
         <div className="header-items">
@@ -39,6 +44,15 @@ const Header = () => {
             })}
           >
             Events
+          </Link>
+	<Link
+            to="/top-holder"
+            className={classNames({
+              "header-item": true,
+              active: location.indexOf("top-holder") > -1,
+            })}
+          >
+            Top Holders
           </Link>
         </div>
         <MainSearch />

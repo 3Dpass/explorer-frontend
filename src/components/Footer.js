@@ -28,6 +28,14 @@ const Footer = () => {
           >
             3DPass Coin
           </a>
+<a
+            className="one-footer-info"
+            href="https://prod-api.3dpass.org:4000/api-docs/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Explorer API
+          </a>
         </div>
         <div className="one-footer-section">
           <div className="footer-section-title">Follow our News</div>

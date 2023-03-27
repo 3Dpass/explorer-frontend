@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
-
+import { Keyring } from '@polkadot/api';
+//import { u8aToHex } from '@polkadot/util';
 import moment from "moment";
 
 const TransferPreview = ({ transfer }) => {
@@ -13,6 +14,23 @@ const TransferPreview = ({ transfer }) => {
     blockDatetime,
   } = transfer;
 
+  //const keyring = new Keyring({ ss58Format: 71, type: 'sr25519'});
+  const toMultiAddressAccounts = toMultiAddressAccountId.split(",");
+  const fromMultiAddressAccounts = fromMultiAddressAccountId.split(",");
+  const to = [];
+  const from = [];
+
+  for (let i = 0; i < toMultiAddressAccounts.length; i++) {
+    const keyring = new Keyring({ ss58Format: 71, type: 'sr25519'});
+    const decodedToAcc = keyring.encodeAddress(toMultiAddressAccounts[i], 71);
+    to.push(decodedToAcc);
+  }
+
+  for (let i = 0; i < fromMultiAddressAccounts.length; i++) {
+    const keyring = new Keyring({ ss58Format: 71, type: 'sr25519'});
+    const decodedFromAcc = keyring.encodeAddress(fromMultiAddressAccounts[i], 71);
+    from.push(decodedFromAcc);
+  }
   const openAccount = (e, account) => {
     e.preventDefault();
     navigate("account/" + account);
@@ -32,21 +50,27 @@ const TransferPreview = ({ transfer }) => {
         </div>
         <div className="block-info">
           From{" "}
-          <span
-            className="ellipsis"
-            title={fromMultiAddressAccountId}
-            onClick={(e) => openAccount(e, fromMultiAddressAccountId)}
-          >
-            {fromMultiAddressAccountId}
-          </span>{" "}
+          {from.map((acc, index) => (
+            <span
+              key={index}
+              className="ellipsis"
+              title={acc}
+              onClick={(e) => openAccount(e, acc)}
+            >
+              {acc}
+            </span>
+          ))}{" "}
           to{" "}
-          <span
-            className="ellipsis"
-            title={toMultiAddressAccountId}
-            onClick={(e) => openAccount(e, toMultiAddressAccountId)}
-          >
-            {toMultiAddressAccountId}
-          </span>
+          {to.map((acc, index) => (
+            <span
+              key={index}
+              className="ellipsis"
+              title={acc}
+              onClick={(e) => openAccount(e, acc)}
+            >
+              {acc}
+            </span>
+          ))}
         </div>
       </div>
     </Link>

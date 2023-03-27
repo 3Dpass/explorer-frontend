@@ -14,7 +14,7 @@ import Log from "./pages/Log";
 import { ToastContainer } from "react-toastify";
 import Transfer from "./pages/Transfer";
 import Transfers from "./pages/Transfers";
-
+import TopHolder from "./pages/TopHolder";
 const App = () => {
   return (
     <BrowserRouter>
@@ -29,6 +29,7 @@ const App = () => {
         <Route path="/event/:number" element={<Event />} />
         <Route path="/account/:account" element={<Account />} />
         <Route path="/events/:page" element={<Events />} />
+	<Route path="/top-holder" element={<TopHolder />} />
       </Routes>
 
       <ToastContainer
