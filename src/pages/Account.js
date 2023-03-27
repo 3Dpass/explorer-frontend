@@ -12,7 +12,7 @@ import classNames from "classnames";
 import moment from "moment";
 import { useParams } from "react-router-dom";
 
-  const Account = () => {
+const Account = () => {
   const { account } = useParams();
   const [accoutInfo, setAccountInfo] = useState({});
   const [activeMenu, setActiveMenu] = useState("Extrinsics");
@@ -31,8 +31,8 @@ import { useParams } from "react-router-dom";
   const [miner, setMiner] = useState("");
   const [miner_raw, setMiner_raw] = useState("");
   const [errorData, setErrorData] = useState(false);
-  const { u8aToHex } = require('@polkadot/util');
-  const { Keyring } = require('@polkadot/keyring');
+  const { u8aToHex } = require("@polkadot/util");
+  const { Keyring } = require("@polkadot/keyring");
   const [judgements, setJudgements] = useState([]);
   const [deposit, setDeposit] = useState("");
   const [info, setInfo] = useState({});
@@ -46,9 +46,7 @@ import { useParams } from "react-router-dom";
   const [image, setImage] = useState("");
   const [twitterRaw, setTwitterRaw] = useState("");
   useEffect(() => {
-  
-  const getAccountInfo = async (acc) => {
-      
+    const getAccountInfo = async (acc) => {
       setLoading(true);
       const wsProvider = new WsProvider("wss://rpc2.3dpass.org");
       const api = await ApiPromise.create({ provider: wsProvider });
@@ -80,15 +78,15 @@ import { useParams } from "react-router-dom";
       const minerEncoded = keyring.encodeAddress(account, 71);
       setMiner(minerEncoded);
       let minerDecoded;
-      if (acc.startsWith('d1')){
-      const decodedAcc = keyring.decodeAddress(acc);
-      const publicKey = u8aToHex(decodedAcc)
-      minerDecoded = publicKey;	
-      setMiner_raw(minerDecoded);
-} else {
-	minerDecoded = acc;
-	setMiner_raw(minerDecoded);
-}
+      if (acc.startsWith("d1")) {
+        const decodedAcc = keyring.decodeAddress(acc);
+        const publicKey = u8aToHex(decodedAcc);
+        minerDecoded = publicKey;
+        setMiner_raw(minerDecoded);
+      } else {
+        minerDecoded = acc;
+        setMiner_raw(minerDecoded);
+      }
     };
 
     getAccountInfo(account);
@@ -107,16 +105,16 @@ import { useParams } from "react-router-dom";
   }, [account, pageKeyFrom]);
 
   const getExtrincts = async (acc, pageKey) => {
-	 let address;
-    if (acc.startsWith('d1')) {
-    const keyring = new Keyring({ ss58Format: 71, type: 'sr25519'});
-    const decodedAcc = keyring.decodeAddress(acc);
-    const publicKey = u8aToHex(decodedAcc)
-    address = publicKey;
+    let address;
+    if (acc.startsWith("d1")) {
+      const keyring = new Keyring({ ss58Format: 71, type: "sr25519" });
+      const decodedAcc = keyring.decodeAddress(acc);
+      const publicKey = u8aToHex(decodedAcc);
+      address = publicKey;
     } else {
-    address = acc;
+      address = acc;
     }
-     const getTransfers = {
+    const getTransfers = {
       query: `query{getExtrinsics(pageKey: "${pageKey}", pageSize: 10, filters: {multiAddressAccountId: "${address}"}){pageInfo{pageSize, pageNext, pagePrev} objects{ blockNumber, blockDatetime, extrinsicIdx, hash, complete }}}`,
     };
 
@@ -129,16 +127,15 @@ import { useParams } from "react-router-dom";
       setErrorData(true);
     }
   };
-    const getTransfersTo = async (acc, pageKey) => {
-
+  const getTransfersTo = async (acc, pageKey) => {
     let address;
-    if (acc.startsWith('d1')) {
-    const keyring = new Keyring({ ss58Format: 71, type: 'sr25519'});
-    const decodedAcc = keyring.decodeAddress(acc);
-    const publicKey = u8aToHex(decodedAcc)
-    address = publicKey;
+    if (acc.startsWith("d1") || acc.startsWith("5")) {
+      const keyring = new Keyring({ ss58Format: 71, type: "sr25519" });
+      const decodedAcc = keyring.decodeAddress(acc);
+      const publicKey = u8aToHex(decodedAcc);
+      address = publicKey;
     } else {
-    address = acc;
+      address = acc;
     }
     const postTransfers = {
       query: `query{getTransfers(pageKey: "${pageKey}", pageSize: 10, filters: {toMultiAddressAccountId: "${address}"}){pageInfo{pageSize, pageNext, pagePrev} objects{ blockNumber, extrinsicIdx, eventIdx, fromMultiAddressAccountId, toMultiAddressAccountId, value }}}`,
@@ -151,21 +148,21 @@ import { useParams } from "react-router-dom";
       setErrorData(false);
     } else {
       setErrorData(true);
-	}
+    }
   };
 
   const getTransfersFrom = async (acc, pageKey) => {
-    const { u8aToHex } = require('@polkadot/util');
-    const { Keyring } = require('@polkadot/keyring');
+    const { u8aToHex } = require("@polkadot/util");
+    const { Keyring } = require("@polkadot/keyring");
 
     let address;
-    if (acc.startsWith('d1')) {
-    const keyring = new Keyring({ ss58Format: 71, type: 'sr25519'});
-    const decodedAcc = keyring.decodeAddress(acc);
-    const publicKey = u8aToHex(decodedAcc);
-    address = publicKey;
+    if (acc.startsWith("d1") || acc.startsWith("5")) {
+      const keyring = new Keyring({ ss58Format: 71, type: "sr25519" });
+      const decodedAcc = keyring.decodeAddress(acc);
+      const publicKey = u8aToHex(decodedAcc);
+      address = publicKey;
     } else {
-    address = acc;
+      address = acc;
     }
     const postTransfers = {
       query: `query{getTransfers(pageKey: "${pageKey}", pageSize: 10, filters: {fromMultiAddressAccountId: "${address}"}){pageInfo{pageSize, pageNext, pagePrev} objects{ blockNumber, extrinsicIdx, eventIdx, fromMultiAddressAccountId, toMultiAddressAccountId, value }}}`,
@@ -175,47 +172,62 @@ import { useParams } from "react-router-dom";
     if (responseTransfers.data && responseTransfers.data.data.getTransfers) {
       setTransferFrom(responseTransfers.data.data.getTransfers.objects);
       setPaginationFrom(responseTransfers.data.data.getTransfers.pageInfo);
-	    setErrorData(false);
-} else {
+      setErrorData(false);
+    } else {
       setErrorData(true);
-	}
+    }
   };
-   useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
+      setJudgements([]);
+      setDeposit("");
+      setInfo({});
+      setAdditional([]);
+      setDisplayRaw("");
+      setLegal("");
+      setWebRaw("");
+      setRiot("");
+      setEmailRaw("");
+      setPgpFingerprint("");
+      setImage("");
+      setTwitterRaw("");
+
       const identurl = `https://prod-api.3dpass.org:4000/identity/${miner}`;
       const response = await fetch(identurl);
-	if(!response) {
-      const data = await response.json();
-      setJudgements(data.judgements || []);
-      setDeposit(data.deposit || "");
-      setInfo(data.info || {});
-      setAdditional(data.info?.additional || []);
-      setDisplayRaw(data.info?.display?.Raw || "");
-      setLegal(data.info?.legal || "");
-      setWebRaw(data.info?.web?.Raw || "");
-      setRiot(data.info?.riot || "");
-      setEmailRaw(data.info?.email?.Raw || "");
-      setPgpFingerprint(data.info?.pgpFingerprint || "");
-      setImage(data.info?.image || "");
-      setTwitterRaw(data.info?.twitter?.Raw || "");
-	} else {
-	const data = await response.json();
-      setJudgements(data.judgements || []);
-      setDeposit(data.deposit || "");
-      setInfo(data.info || {});
-      setAdditional(data.info?.additional?.map((item) => ({
-    	name: item[0]?.Raw,
-    	value: item[1]?.Raw,
-	})) || []);
-      setDisplayRaw(data.info?.display?.Raw || "");
-      setLegal(data.info?.legal || "");
-      setWebRaw(data.info?.web?.Raw || "");
-      setRiot(data.info?.riot || "");
-      setEmailRaw(data.info?.email?.Raw || "");
-      setPgpFingerprint(data.info?.pgpFingerprint || "");
-      setImage(data.info?.image || "");
-      setTwitterRaw(data.info?.twitter?.Raw || "");
-}
+      if (!response) {
+        const data = await response.json();
+        setJudgements(data.judgements || []);
+        setDeposit(data.deposit || "");
+        setInfo(data.info || {});
+        setAdditional(data.info?.additional || []);
+        setDisplayRaw(data.info?.display?.Raw || "");
+        setLegal(data.info?.legal || "");
+        setWebRaw(data.info?.web?.Raw || "");
+        setRiot(data.info?.riot || "");
+        setEmailRaw(data.info?.email?.Raw || "");
+        setPgpFingerprint(data.info?.pgpFingerprint || "");
+        setImage(data.info?.image || "");
+        setTwitterRaw(data.info?.twitter?.Raw || "");
+      } else {
+        const data = await response.json();
+        setJudgements(data.judgements || []);
+        setDeposit(data.deposit || "");
+        setInfo(data.info || {});
+        setAdditional(
+          data.info?.additional?.map((item) => ({
+            name: item[0]?.Raw,
+            value: item[1]?.Raw,
+          })) || []
+        );
+        setDisplayRaw(data.info?.display?.Raw || "");
+        setLegal(data.info?.legal || "");
+        setWebRaw(data.info?.web?.Raw || "");
+        setRiot(data.info?.riot || "");
+        setEmailRaw(data.info?.email?.Raw || "");
+        setPgpFingerprint(data.info?.pgpFingerprint || "");
+        setImage(data.info?.image || "");
+        setTwitterRaw(data.info?.twitter?.Raw || "");
+      }
     };
 
     if (miner.startsWith("d1")) {
@@ -223,40 +235,33 @@ import { useParams } from "react-router-dom";
     }
   }, [miner]);
 
-  const handleMinerChange = (event) => {
-    setMiner(event.target.value);
-  };
-
-  const handleMinerRawChange = (event) => {
-    setMiner_raw(event.target.value);
-  };
-
-//  const keyring = new Keyring({ ss58Format: 71, type: 'sr25519'});
   const prepareTableArray = (arr, type) => {
     if (!arr.length) {
-	return [];
+      return [];
     }
 
     let array = [];
     for (let i = 0; i < arr.length; i++) {
       let item = arr[i];
-	let fromEncoded;
-	let toEncoded;
+      let fromEncoded;
+      let toEncoded;
 
-if (!item || (!item.fromMultiAddressAccountId && !item.toMultiAddressAccountId)) {
-    continue;
-  }
+      if (
+        !item ||
+        (!item.fromMultiAddressAccountId && !item.toMultiAddressAccountId)
+      ) {
+        continue;
+      }
 
-  const keyring = new Keyring({ ss58Format: 71, type: 'sr25519' });
+      const keyring = new Keyring({ ss58Format: 71, type: "sr25519" });
 
-  if (item.fromMultiAddressAccountId) {
-    fromEncoded = keyring.encodeAddress(item.fromMultiAddressAccountId);
-  }
+      if (item.fromMultiAddressAccountId) {
+        fromEncoded = keyring.encodeAddress(item.fromMultiAddressAccountId);
+      }
 
-  if (item.toMultiAddressAccountId) {
-    toEncoded = keyring.encodeAddress(item.toMultiAddressAccountId);
-  }
-
+      if (item.toMultiAddressAccountId) {
+        toEncoded = keyring.encodeAddress(item.toMultiAddressAccountId);
+      }
 
       if (type === "extrincts") {
         array.push([
@@ -278,12 +283,12 @@ if (!item || (!item.fromMultiAddressAccountId && !item.toMultiAddressAccountId))
             url: "/extrinsic/" + item.blockNumber + "-" + item.extrinsicIdx,
           },
           {
-		val: fromEncoded,
-		url: "/account/" + fromEncoded,
+            val: fromEncoded,
+            url: "/account/" + fromEncoded,
           },
           {
-		val: toEncoded,
-		url: "/account/" + toEncoded,
+            val: toEncoded,
+            url: "/account/" + toEncoded,
           },
           { val: item.value / 1000000000000 + " P3D" },
         ]);
@@ -291,6 +296,44 @@ if (!item || (!item.fromMultiAddressAccountId && !item.toMultiAddressAccountId))
     }
     return array;
   };
+
+  let judgementItems = [];
+
+  if (judgements && judgements.length > 0) {
+    judgements.forEach((judgement, index) => {
+      judgementItems.push(
+        <ListInfo
+          key={`registrar-index-${index}`}
+          title={`Registrar index (${index})`}
+          info={judgement[0]}
+          canCopy={false}
+        />
+      );
+
+      if (typeof judgement[1] === "object") {
+        for (const key in judgement[1]) {
+          const value = judgement[1][key];
+          judgementItems.push(
+            <ListInfo
+              key={`registrar-value-${index}-${key}`}
+              title={key}
+              info={value}
+              canCopy={false}
+            />
+          );
+        }
+      } else {
+        judgementItems.push(
+          <ListInfo
+            key={`registrar-level-${index}`}
+            title={`Level of confidence (${index})`}
+            info={judgement[1]}
+            canCopy={false}
+          />
+        );
+      }
+    });
+  }
 
   const data = [
     { name: "Locked", value: accoutInfo.miscFrozen, color: "#71CDA4" },
@@ -311,50 +354,63 @@ if (!item || (!item.fromMultiAddressAccountId && !item.toMultiAddressAccountId))
               </div>
               <ListInfo title={"Account Id"} info={miner_raw} canCopy={true} />
               <ListInfo title={"Address"} info={miner} canCopy={true} />
-  	      {judgements && judgements.length > 0 &&
-  	     
-	      <ListInfo title={"Registrar index"} info={judgements[0][0]} canCopy={false} />
-              }
-    	      {judgements && judgements.length > 0 &&
-              	<ListInfo title={"Level of confidence"} info={judgements[0][1]} canCopy={false} />
-    	      }
-    	      {deposit && 
-      		<ListInfo title={"Registrar fee"} info={(parseFloat(deposit.replaceAll(",", "")) / 1000000000000).toFixed(4)} canCopy={false} />
-    	      }
-    	 {displayRaw && (
-            <div>
-              <ListInfo title={"Name"} info={info.display.Raw} canCopy={false} />
-            </div>
-  ) }
-    {legal && legal !== "None" && (
-      <ListInfo title={"Legal"} info={legal.Raw} canCopy={false} />
-   ) }
-    {webRaw &&
-      <ListInfo title={"Web site"} info={webRaw} canCopy={false} />
-    }
-    {riot && riot !== "None" &&
-      <ListInfo title={"Riot"} info={riot} canCopy={false} />
-    }
-    {emailRaw &&
-      <ListInfo title={"Email"} info={emailRaw} canCopy={false} />
-    }
-    {pgpFingerprint &&
-      <ListInfo title={"PGP fingerprint"} info={pgpFingerprint} canCopy={false} />
-    }
-    {image && image !== "None" &&
-      <ListInfo title={"image"} info={image} canCopy={false} />
-    }
-    {twitterRaw &&
-      <ListInfo title={"Twitter"} info={twitterRaw} canCopy={false} />
-    }
-	{additional && additional.length > 0 && (
-    <div>
-        {additional.map((item, index) => (
-            <ListInfo key={index} title={item.name} info={item.value} canCopy={false} />
-        ))}
-    </div>
-)}
-          {/*    <div className="qr-code-holder">
+              {judgementItems}
+              {deposit && (
+                <ListInfo
+                  title={"Registrar fee"}
+                  info={(
+                    parseFloat(deposit.replaceAll(",", "")) / 1000000000000
+                  ).toFixed(4)}
+                  canCopy={false}
+                />
+              )}
+              {displayRaw && (
+                <div>
+                  <ListInfo
+                    title={"Name"}
+                    info={info.display.Raw}
+                    canCopy={false}
+                  />
+                </div>
+              )}
+              {legal && legal !== "None" && (
+                <ListInfo title={"Legal"} info={legal.Raw} canCopy={false} />
+              )}
+              {webRaw && (
+                <ListInfo title={"Web site"} info={webRaw} canCopy={false} />
+              )}
+              {riot && riot !== "None" && (
+                <ListInfo title={"Riot"} info={riot} canCopy={false} />
+              )}
+              {emailRaw && (
+                <ListInfo title={"Email"} info={emailRaw} canCopy={false} />
+              )}
+              {pgpFingerprint && (
+                <ListInfo
+                  title={"PGP fingerprint"}
+                  info={pgpFingerprint}
+                  canCopy={false}
+                />
+              )}
+              {image && image !== "None" && (
+                <ListInfo title={"image"} info={image} canCopy={false} />
+              )}
+              {twitterRaw && (
+                <ListInfo title={"Twitter"} info={twitterRaw} canCopy={false} />
+              )}
+              {additional && additional.length > 0 && (
+                <div>
+                  {additional.map((item, index) => (
+                    <ListInfo
+                      key={index}
+                      title={item.name}
+                      info={item.value}
+                      canCopy={false}
+                    />
+                  ))}
+                </div>
+              )}
+              {/*    <div className="qr-code-holder">
                 <QRCode
                   size={120}
                   value={window.location.href}
@@ -409,14 +465,14 @@ if (!item || (!item.fromMultiAddressAccountId && !item.toMultiAddressAccountId))
                 </>
               )}
               {loading && <div className="loading-info">Loading data...</div>}
-            <div className="qr-code-holder">
+              <div className="qr-code-holder">
                 <QRCode
                   size={120}
                   value={window.location.href}
                   viewBox={`0 0 120 120`}
                 />
               </div>
-	    </div>
+            </div>
             <div className="list-container blocks-list-container account-table-container">
               <div className="main-menu">
                 <div
