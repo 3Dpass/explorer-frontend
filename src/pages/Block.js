@@ -1,6 +1,9 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import BlockComponent from "../components/RenderBlock";
+import { RPC_CONFIG, RPC_TYPES } from "../components/RpcConf";
+import { Buffer } from "buffer";
 
 import ErrorData from "../components/ErrorData";
 import { Keyring } from "@polkadot/keyring";
@@ -20,6 +23,9 @@ const Block = () => {
   const [activeMenu, setActiveMenu] = useState("Extrinsics");
   const [authorId, setAuthorId] = useState("");
   const [miner, setMiner] = useState("");
+  const [object3d, setObject3D] = useState("");
+  const [objectAlgo, setObjectAlgo] = useState("");
+  const [objectHashes, setObjectHashes] = useState([]);
   const [errorData, setErrorData] = useState(false);
   const [validator, setValidator] = useState("");
   const logsHeaders = ["Log Index", "Block", "Type"];
@@ -53,10 +59,36 @@ const Block = () => {
         setBlock(response.data.data.getBlock);
 
         const wsProvider = new WsProvider("wss://rpc2.3dpass.org");
-        const api = await ApiPromise.create({ provider: wsProvider });
+        const api = await ApiPromise.create({
+          provider: wsProvider,
+          types: RPC_TYPES,
+          rpc: RPC_CONFIG,
+        });
         const simo = await api.query.validatorSet.authors(number);
+        const blockHash = await api.rpc.chain.getBlockHash(number);
+        const blockHeader = await api.rpc.chain.getHeader(blockHash);
+        const algoNameLength = 32;
+        const objectHashLength = 64;
+        const objectHashesString = blockHeader.digest.logs[2].asOther
+          .toString()
+          .substring(2);
+        const objectHashAlgo = objectHashesString.substring(0, algoNameLength);
+        const objectAlgo = Buffer.from(objectHashAlgo, "hex").toString("utf8");
+        const objectObjRaw = await api.rpc.poscan.getMiningObject(blockHash);
+        const objectObj = objectObjRaw.toString();
+        const objectHashes = [];
+        let offset = algoNameLength;
+        while (offset < objectHashesString.length) {
+          objectHashes.push(
+            objectHashesString.substring(offset, offset + objectHashLength)
+          );
+          offset += objectHashLength;
+        }
+        setObjectHashes(objectHashes);
+        
+        setObjectAlgo(objectAlgo);
         setValidator(simo.toHuman());
-
+        setObject3D(objectObj);
         let extrinctArray = [];
         const countExtrinsics = response.data.data.getBlock.countExtrinsics;
 
@@ -285,6 +317,21 @@ const Block = () => {
                 info={specVersion}
                 canCopy={false}
               />
+              <ListInfo
+                title={"Object Hash Algo"}
+                info={objectAlgo}
+                canCopy={false}
+              />
+              <ListInfo
+                title={"Object unique HashId"}
+                info={objectHashes.join("")}
+                canCopy={true}
+              />
+              {object3d && (
+                <div className="object-container">
+                  <BlockComponent object3d={object3d} />
+                </div>
+              )}
             </div>
             <div className="list-container blocks-list-container table-container">
               <div className="main-menu">
