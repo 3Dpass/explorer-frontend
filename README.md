@@ -1,7 +1,5 @@
 # 3DPass Block Explorer - frontend
-[3DPass Block Explorer](https://3dpscan.io/) represents a hight performance Web3 blockchain explorer client for [The Ledger of Things](https://github.com/3dpass), which  might be used either for [3DPass](https://3dpass.org) or any blockchain network based on [Substrate](https://substrate.io/). In order to fetch the blockchain data the app connects to [3DPscan Explorer API](https://github.com/3Dpass/explorer-api) backend server directly from user's web browser. 
-
-Block Explorer web page: [https://3dpscan.io/](https://3dpscan.io/)
+A high performance Web3 blockchain explorer client for [The Ledger of Things](https://github.com/3Dpass/3DP). In order to fetch the blockchain data the app connects to [Explorer API graphql backend server](https://github.com/3Dpass/explorer-api) directly from the web browser. 
 
 Features: 
 - Blocks, Extrinsics, Events in detail
